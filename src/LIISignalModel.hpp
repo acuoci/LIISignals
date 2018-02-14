@@ -150,6 +150,29 @@ namespace OpenSMOKE
 								(gammaStar + 1.) / (gammaStar - 1.)*(Tp / Tg - 1.);
 		}
 
+		else if (conduction_model_ == HEAT_CONDUCTION_CONTINUUM)
+		{
+			const double fa = gas_.ThermalConductivity(Tg);
+			const double fc = gas_.ThermalConductivity((Tg+Tp)/2.);
+			const double fb = gas_.ThermalConductivity(Tp);
+			const double I = (Tp - Tg) / 6.*(fa + 4.*fc + fb);
+
+			return 2.*pi_*dp*I;
+		}
+
+		else if (conduction_model_ == HEAT_CONDUCTION_TRANSITION_MCCOY_CHA)
+		{
+			const double kg = gas_.ThermalConductivity(Tg);
+			const double Mg = gas_.M();
+			const double gamma = gas_.Gamma(Tg);
+			const double f = (9 * gamma - 5.) / 4.;
+			const double G = 8.*f / alpha_ / (gamma + 1.);
+			const double lambda = kg / f / p * (gamma - 1.)*std::sqrt(pi_*Mg*Tg / 2. / R_);
+
+
+			return 2.*kg*pi_*dp*dp*(Tp-Tg)/(dp+G*lambda);
+		}
+
 		return 0;
 	}
 
