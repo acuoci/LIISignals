@@ -62,6 +62,12 @@ namespace OpenSMOKE
 		SootParticles();
 
 		/**
+		*@brief		Calculation of density of soot
+		*@return	density (in kg/m3)
+		*/
+		double Density();
+
+		/**
 		*@brief Calculation of constant pressure specific heat (mass units)
 		*@param		T	temperature (in K)
 		*@return		the Cp (in J/kg/K)
@@ -152,8 +158,3 @@ namespace OpenSMOKE
 #include "SootParticles.hpp"
 
 #endif /* OpenSMOKE_SootParticles_H */
-
-
-
-
-

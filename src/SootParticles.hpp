@@ -62,6 +62,11 @@ namespace OpenSMOKE
 		mv_correlation_ = flag;
 	}
 
+	double SootParticles::Density()
+	{
+		return 1860.;
+	}
+
 	double SootParticles::MassSpecificHeatConstantPressure(const double T)
 	{
 		const double a = 1878.;			// [J/kg/K]

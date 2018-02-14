@@ -16,7 +16,7 @@
 |                                                                         |
 |   This file is part of OpenSMOKE++ framework.                           |
 |                                                                         |
-|   License                                                               |
+|	License                                                               |
 |                                                                         |
 |   Copyright(C) 2018 Alberto Cuoci                                       |
 |   OpenSMOKE++ is free software: you can redistribute it and/or modify   |
@@ -34,86 +34,107 @@
 |                                                                         |
 \*-----------------------------------------------------------------------*/
 
-#ifndef OpenSMOKE_GasMixture_H
-#define OpenSMOKE_GasMixture_H
+#ifndef OpenSMOKE_RungeKutta4thOrder_H
+#define OpenSMOKE_RungeKutta4thOrder_H
+
+#include <vector>
 
 namespace OpenSMOKE
 {
-	//!  A class describing the properties of a gaseous mixture
+	//!  A class for solving ODE systems beased on the 4th order Runge-Kutta method
 	/*!
-	This class provides the correlations for describing the properties of a gaseous mixture
+	This class provides the tools for solving ODE systems beased on the 4th order Runge-Kutta method
 	*/
 
-	class GasMixture
+	class RungeKutta4thOrder
 	{
-	
+
 	public:
 
 		/**
 		*@brief Default constructor
 		*/
-		GasMixture();
+		RungeKutta4thOrder();
 
 		/**
-		*@brief Calculation of constant pressure specific heat (mass units)
-		*@param		T	temperature (in K)
-		*@return		the Cp (in J/kg/K)
+		*@brief Sets the initial conditions (together with memory allocation)
+		*@param	n number of equations
+		*@param	tInitial initial time
+		*@param	uInitial initial values of unknowns
 		*/
-		double MassSpecificHeatConstantPressure(const double T);
+		void SetInitialConditions(const unsigned int n, const double tInitial, const double* uInitial);
 
 		/**
-		*@brief Calculation of constant volume specific heat (mass units)
-		*@param		T	temperature (in K)
-		*@return		the Cv (in J/kg/K)
+		*@brief Sets the constant time step
+		*@param	dt time step
 		*/
-		double MassSpecificHeatConstantVolume(const double T);
+		void SetTimeStep(const double dt);
 
 		/**
-		*@brief Calculation of constant pressure specific heat (mole units)
-		*@param		T	temperature (in K)
-		*@return		the Cp (in J/kmol/K)
+		*@brief Sets the final time
+		*@param	tFinal the final time
 		*/
-		double MoleSpecificHeatConstantPressure(const double T);
+		void SetFinalTime(const double tFinal);
 
 		/**
-		*@brief Calculation of constant volume specific heat (mole units)
-		*@param		T	temperature (in K)
-		*@return		the Cv (in J/kmol/K)
+		*@brief Sets the ODE function
+		*@param	*f pointer to the ODE function
 		*/
-		double MoleSpecificHeatConstantVolume(const double T);
+		void SetOdeSystem(void(*f)(const double t, const double* u, double* dudt))
+		{
+			f_ = f;
+		}
 
 		/**
-		*@brief Calculation of heat capacity ratio gamma=Cp/Cv
-		*@param		T	temperature (in K)
-		*@return		the heat capacity ratio (dimensionless)
+		*@brief Solves the ODE system
 		*/
-		double Gamma(const double T);
+		void Solve();
 
 		/**
-		*@brief Sets the molecular weight of the mixture
-		*@param	MW	molecular weight (in kg/kmol)
+		*@brief		Returns the solution
+		*@return	the solution matrix (rows=number of steps, colums=time|unknown1|unknown2|...)
 		*/
-		void SetMolecularWeight(const double MW);
-
-		/**
-		*@brief		Returns the molecular weight
-		*@return	molecular weight (in kg/kmol)
-		*/
-		double M() const { return mw_; }
-
-	
-	private:
-
-		double mw_;					//!< the gas molecular weight (in kg/kmol)
+		const std::vector< std::vector<double> >& solution() const { return solution_;  }
 
 	private:
 
-		static const double R_;		//!< the constant of ideal gases (in J/kmol/K)
+		/**
+		*@brief Allocates memory
+		*/
+		void MemoryAllocation();
+
+		/**
+		*@brief Pointer to the ODE function 
+		*/
+		void(*f_)(const double t, const double* u, double* dudt);
+
+
+	private:
+
+		std::vector<double> uInitial_;	//!< initial values of unknowns
+
+		std::vector<double> u0_;		//!< vector for internal use
+		std::vector<double> u1_;		//!< vector for internal use
+		std::vector<double> u2_;		//!< vector for internal use
+		std::vector<double> u3_;		//!< vector for internal use
+
+		std::vector<double> f0_;		//!< vector for internal use
+		std::vector<double> f1_;		//!< vector for internal use
+		std::vector<double> f2_;		//!< vector for internal use
+		std::vector<double> f3_;		//!< vector for internal use
+
+		std::vector< std::vector<double> > solution_;	//!< the solution matrix(rows = number of steps, colums = time | unknown1 | unknown2 | ...)
+
+
+		unsigned int n_;		//!< number of equations/unknowns
+		double tInitial_;		//!< initial time
+		double tFinal_;			//!< final time
+		double dt_;				//!< time step
 
 	};
 
 }
 
-#include "GasMixture.hpp"
+#include "RungeKutta4thOrder.hpp"
 
-#endif /* OpenSMOKE_GasMixture_H */
+#endif /* OpenSMOKE_RungeKutta4thOrder_H */

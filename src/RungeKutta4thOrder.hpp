@@ -34,86 +34,95 @@
 |                                                                         |
 \*-----------------------------------------------------------------------*/
 
-#ifndef OpenSMOKE_GasMixture_H
-#define OpenSMOKE_GasMixture_H
-
 namespace OpenSMOKE
 {
-	//!  A class describing the properties of a gaseous mixture
-	/*!
-	This class provides the correlations for describing the properties of a gaseous mixture
-	*/
-
-	class GasMixture
+	RungeKutta4thOrder::RungeKutta4thOrder()
 	{
-	
-	public:
+		
+	}
 
-		/**
-		*@brief Default constructor
-		*/
-		GasMixture();
+	void RungeKutta4thOrder::SetInitialConditions(const unsigned int n, const double tInitial, const double* uInitial)
+	{
+		tInitial_ = tInitial;
+		n_ = n;
 
-		/**
-		*@brief Calculation of constant pressure specific heat (mass units)
-		*@param		T	temperature (in K)
-		*@return		the Cp (in J/kg/K)
-		*/
-		double MassSpecificHeatConstantPressure(const double T);
+		MemoryAllocation();
 
-		/**
-		*@brief Calculation of constant volume specific heat (mass units)
-		*@param		T	temperature (in K)
-		*@return		the Cv (in J/kg/K)
-		*/
-		double MassSpecificHeatConstantVolume(const double T);
+		uInitial_.resize(n_);
+		for (unsigned int i = 0; i < n_; i++)
+			uInitial_[i] = uInitial[i];
+	}
 
-		/**
-		*@brief Calculation of constant pressure specific heat (mole units)
-		*@param		T	temperature (in K)
-		*@return		the Cp (in J/kmol/K)
-		*/
-		double MoleSpecificHeatConstantPressure(const double T);
+	void RungeKutta4thOrder::SetTimeStep(const double dt)
+	{
+		dt_ = dt;
+	}
 
-		/**
-		*@brief Calculation of constant volume specific heat (mole units)
-		*@param		T	temperature (in K)
-		*@return		the Cv (in J/kmol/K)
-		*/
-		double MoleSpecificHeatConstantVolume(const double T);
+	void RungeKutta4thOrder::SetFinalTime(const double tFinal)
+	{
+		tFinal_ = tFinal;
+	}
 
-		/**
-		*@brief Calculation of heat capacity ratio gamma=Cp/Cv
-		*@param		T	temperature (in K)
-		*@return		the heat capacity ratio (dimensionless)
-		*/
-		double Gamma(const double T);
+	void RungeKutta4thOrder::MemoryAllocation()
+	{
+		u0_.resize(n_);
+		u1_.resize(n_);
+		u2_.resize(n_);
+		u3_.resize(n_);
 
-		/**
-		*@brief Sets the molecular weight of the mixture
-		*@param	MW	molecular weight (in kg/kmol)
-		*/
-		void SetMolecularWeight(const double MW);
+		f0_.resize(n_);
+		f1_.resize(n_);
+		f2_.resize(n_);
+		f3_.resize(n_);
 
-		/**
-		*@brief		Returns the molecular weight
-		*@return	molecular weight (in kg/kmol)
-		*/
-		double M() const { return mw_; }
+		solution_.resize(n_ + 1);
+	}
 
-	
-	private:
+	void RungeKutta4thOrder::Solve()
+	{
+		// Number of steps
+		const unsigned int nsteps = (unsigned int)((tFinal_ - tInitial_) / dt_);
 
-		double mw_;					//!< the gas molecular weight (in kg/kmol)
+		// Resize solution matrix
+		for (unsigned int i = 0; i < n_ + 1; i++)
+			solution_[i].resize(nsteps+1);
 
-	private:
+		// Initial conditions
+		u0_ = uInitial_;
+		solution_[0][0] = tInitial_;
+		for (unsigned int i = 0; i < n_; i++)
+			solution_[i+1][0] = u0_[i];
 
-		static const double R_;		//!< the constant of ideal gases (in J/kmol/K)
+		// Loop
+		for (unsigned int k = 0; k < nsteps; k++)
+		{
+			// Current time
+			const double t0 = tInitial_ + k * dt_;
 
-	};
+			// Evalution at t0
+			f_(t0, u0_.data(), f0_.data());
 
+			const double t1 = t0 + dt_ / 2.;
+			for (unsigned int i = 0; i < n_; i++)
+				u1_[i] = u0_[i] + dt_*f0_[i]/2.;
+			f_(t1, u1_.data(), f1_.data());
+
+			const double t2 = t0 + dt_ / 2.;
+			for (unsigned int i = 0; i < n_; i++)
+				u2_[i] = u0_[i] + dt_ * f1_[i] / 2.;
+			f_(t2, u2_.data(), f2_.data());
+
+			const double t3 = t0 + dt_;
+			for (unsigned int i = 0; i < n_; i++)
+				u3_[i] = u0_[i] + dt_ * f2_[i];
+			f_(t3, u3_.data(), f3_.data());
+
+			for (unsigned int i = 0; i < n_; i++)
+				u0_[i] += dt_ * ( f0_[i] + 2.*f1_[i] + 2.*f2_[i] + f3_[i])/6.;
+
+			solution_[0][k+1] = t3;
+			for (unsigned int i = 0; i < n_; i++)
+				solution_[i + 1][k+1] = u0_[i];
+		}
+	}
 }
-
-#include "GasMixture.hpp"
-
-#endif /* OpenSMOKE_GasMixture_H */

@@ -140,10 +140,14 @@ namespace OpenSMOKE
 	{
 		if (conduction_model_ == HEAT_CONDUCTION_FREE_MOLECULAR)
 		{
-			const double gammaStar = gas_.Gamma(Tg);
+			const double fa = 1./(gas_.Gamma(Tg)-1.);
+			const double fb = 1./(gas_.Gamma(Tp) - 1.);
+			const double fc = 1./(gas_.Gamma((Tg+Tp)/2.)-1.);
+			const double I = (fa + 4.*fc + fb) / 6.;
+			const double gammaStar = 1.+1./I;
 
 			return alpha_ * pi_* (dp*dp) * p / 8. * std::sqrt(8.*R_*Tg / pi_ / gas_.M()) *
-				(gammaStar + 1.) / (gammaStar - 1.)*(Tp / Tg - 1.);
+								(gammaStar + 1.) / (gammaStar - 1.)*(Tp / Tg - 1.);
 		}
 
 		return 0;

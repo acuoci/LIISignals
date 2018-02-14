@@ -247,8 +247,3 @@ namespace OpenSMOKE
 #include "LIISignalModel.hpp"
 
 #endif /* OpenSMOKE_LIISignalModel_H */
-
-
-
-
-
