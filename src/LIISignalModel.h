@@ -16,7 +16,7 @@
 |                                                                         |
 |   This file is part of OpenSMOKE++ framework.                           |
 |                                                                         |
-|	License                                                               |
+|   License                                                               |
 |                                                                         |
 |   Copyright(C) 2018 Alberto Cuoci                                       |
 |   OpenSMOKE++ is free software: you can redistribute it and/or modify   |
@@ -208,6 +208,28 @@ namespace OpenSMOKE
 		*@param		dp	particle diameter (in m)
 		*/
 		double SootSpectralEmissivity(const double dp);
+
+		/**
+		*@brief Calculation of conductive power in free molecular regime for Fuchs model
+		*@param		Tp		particle temperature (in K)
+		*@param		Tdelta	boundary layer temperature (in K)
+		*@param		p		pressure (in Pa)
+		*@param		dp		particle diameter (in m)
+		*@return	the	conductive power (in W)
+		*/
+		double QConductionTransitionFuchsFreeMolecular(const double Tp, const double Tdelta, const double p, const double dp);
+		
+
+		/**
+		*@brief Calculation of conductive power in continuum regime for Fuchs model
+		*@param		Tdelta	boundary layer temperature (in K)
+		*@param		Tg		gas temperature (in K)
+		*@param		p		pressure (in Pa)
+		*@param		dp		particle diameter (in m)
+		*@return	the	conductive power (in W)
+		*/
+		double QConductionTransitionFuchsContinuum(const double Tdelta, const double Tg, const double p, const double dp);
+
 
 	
 	private:

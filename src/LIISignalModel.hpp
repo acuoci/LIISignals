@@ -173,6 +173,52 @@ namespace OpenSMOKE
 			return 2.*kg*pi_*dp*dp*(Tp-Tg)/(dp+G*lambda);
 		}
 
+		else if (conduction_model_ == HEAT_CONDUCTION_TRANSITION_FUCHS)
+		{
+			double Tmin = 0.999999*Tg + 0.000001*Tp;
+			double Tmax = 0.999999*Tp + 0.000001*Tg;
+			double Tdelta = (Tg+Tp)/2.;
+
+			double fmin =	QConductionTransitionFuchsContinuum(Tmin, Tg, p, dp) -
+							QConductionTransitionFuchsFreeMolecular(Tp, Tmin, p, dp);
+
+			double fmax =	QConductionTransitionFuchsContinuum(Tmax, Tg, p, dp) -
+							QConductionTransitionFuchsFreeMolecular(Tp, Tmax, p, dp);
+
+			double fdelta = QConductionTransitionFuchsContinuum(Tdelta, Tg, p, dp) -
+							QConductionTransitionFuchsFreeMolecular(Tp, Tdelta, p, dp);
+
+			for (unsigned int k = 0; k < 12; k++)
+			{
+				if (fmin*fdelta < 0.)
+				{
+					Tmax = Tdelta;
+					fmax = fdelta;
+
+					Tdelta = (Tmin + Tdelta) / 2.;
+					fdelta =	QConductionTransitionFuchsContinuum(Tdelta, Tg, p, dp) -
+								QConductionTransitionFuchsFreeMolecular(Tp, Tdelta, p, dp);
+				}
+				else
+				{
+					Tmin = Tdelta;
+					fmin = fdelta;
+
+					Tdelta = (Tmax + Tdelta) / 2.;
+					fdelta =	QConductionTransitionFuchsContinuum(Tdelta, Tg, p, dp) -
+								QConductionTransitionFuchsFreeMolecular(Tp, Tdelta, p, dp);
+				}
+
+			//	if (Tp > 2999)
+				//	std::cout << Tdelta << std::endl;
+			}
+
+			//if (Tp > 2999)
+			//	getchar();
+
+			return QConductionTransitionFuchsFreeMolecular(Tp, Tdelta, p, dp);;
+		}
+
 		return 0;
 	}
 
@@ -232,5 +278,40 @@ namespace OpenSMOKE
 	double LIISignalModel::SootSpectralEmissivity(const double dp)
 	{
 		return 4.*AdsorptionCrossSection(dp)/pi_/(dp*dp);
+	}
+
+	double LIISignalModel::QConductionTransitionFuchsFreeMolecular(const double Tp, const double Tdelta, const double p, const double dp)
+	{
+		const double fa = 1. / (gas_.Gamma(Tdelta) - 1.);
+		const double fb = 1. / (gas_.Gamma(Tp) - 1.);
+		const double fc = 1. / (gas_.Gamma((Tdelta + Tp) / 2.) - 1.);
+		const double I = (fa + 4.*fc + fb) / 6.;
+		const double gammaStar = 1. + 1. / I;
+
+		return	alpha_ * pi_* (dp*dp) * p / 8. * std::sqrt(8.*R_*Tdelta / pi_ / gas_.M()) *
+				(gammaStar + 1.) / (gammaStar - 1.)*(Tp / Tdelta - 1.);
+	}
+
+	double LIISignalModel::QConductionTransitionFuchsContinuum(const double Tdelta, const double Tg, const double p, const double dp)
+	{
+		const double fa = gas_.ThermalConductivity(Tg);
+		const double fc = gas_.ThermalConductivity((Tg + Tdelta) / 2.);
+		const double fb = gas_.ThermalConductivity(Tdelta);
+		const double I = (Tdelta - Tg) / 6.*(fa + 4.*fc + fb);
+
+		const double kg = gas_.ThermalConductivity(Tdelta);
+		const double Mg = gas_.M();
+		const double gamma = gas_.Gamma(Tdelta);
+		const double f = (9 * gamma - 5.) / 4.;
+
+		const double lambda = kg / f / p * (gamma - 1.)*std::sqrt(pi_*Mg*Tdelta / 2. / R_);
+
+		const double Lambda1 = 1. + (2.*lambda/dp);
+		const double Lambda2 = 1. + (2.*lambda/dp)*(2.*lambda/dp);
+
+		const double coefficient = 0.2*std::pow(Lambda1, 5.) - 1./3.*Lambda2*std::pow(Lambda1, 3.) + 2./15.*std::pow(Lambda2, 2.5);
+		const double delta = std::pow(dp/2., 3.)/lambda/lambda * coefficient - dp/2.;
+
+		return 4.*pi_*(delta + dp / 2.)*I;
 	}
 }
