@@ -94,4 +94,11 @@ namespace OpenSMOKE
 
 		return Cp / Cv;
 	}
+
+	double GasMixture::ThermalConductivity(const double T)
+	{
+		// N2 coefficients from CRECK Modeling
+		const double logT = std::log(T);
+		return std::exp(1.188512e-02 + logT*(-2.896464e+00 + logT*(5.514232e-01 - logT*2.729252e-02)));  // [W/m/K]
+	}
 }

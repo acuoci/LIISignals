@@ -90,6 +90,13 @@ namespace OpenSMOKE
 		double Gamma(const double T);
 
 		/**
+		*@brief Calculation of thermal conductivity
+		*@param		T	temperature (in K)
+		*@return		the thermal conductivity (in W/m/s)
+		*/
+		double ThermalConductivity(const double T);
+
+		/**
 		*@brief Sets the molecular weight of the mixture
 		*@param	MW	molecular weight (in kg/kmol)
 		*/
