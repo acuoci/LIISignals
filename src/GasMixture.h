@@ -16,7 +16,7 @@
 |                                                                         |
 |   This file is part of OpenSMOKE++ framework.                           |
 |                                                                         |
-|	License                                                               |
+|   License                                                               |
 |                                                                         |
 |   Copyright(C) 2018 Alberto Cuoci                                       |
 |   OpenSMOKE++ is free software: you can redistribute it and/or modify   |
@@ -94,6 +94,12 @@ namespace OpenSMOKE
 		*@param	MW	molecular weight (in kg/kmol)
 		*/
 		void SetMolecularWeight(const double MW);
+
+		/**
+		*@brief		Returns the molecular weight
+		*@return	molecular weight (in kg/kmol)
+		*/
+		double M() const { return mw_; }
 
 	
 	private:

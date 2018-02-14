@@ -117,6 +117,8 @@
   <ItemGroup>
     <ClInclude Include="..\..\..\src\GasMixture.h" />
     <ClInclude Include="..\..\..\src\GasMixture.hpp" />
+    <ClInclude Include="..\..\..\src\LIISignalModel.h" />
+    <ClInclude Include="..\..\..\src\LIISignalModel.hpp" />
     <ClInclude Include="..\..\..\src\SootParticles.h" />
     <ClInclude Include="..\..\..\src\SootParticles.hpp" />
   </ItemGroup>
