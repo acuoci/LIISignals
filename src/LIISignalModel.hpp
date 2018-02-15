@@ -130,12 +130,12 @@ namespace OpenSMOKE
 		FHMW_ = FHMW;
 	}
 
-	double LIISignalModel::QRadiation(const double Tp, const double Tg, const double dp)
+	double LIISignalModel::QRadiation(const double Tp, const double Tg, const double dp) const
 	{
 		return pi_ * (dp*dp)*theta_*sigmaSB_*(std::pow(Tp, 4.) - std::pow(Tg, 4.));
 	}
 
-	double LIISignalModel::QAbsorption(const double t, const double dp)
+	double LIISignalModel::QAbsorption(const double t, const double dp) const
 	{
 		const double F = LaserTemporalIntensity(t);
 		const double Cabs = AdsorptionCrossSection(dp);
@@ -143,7 +143,7 @@ namespace OpenSMOKE
 		return Cabs*F;
 	}
 
-	double LIISignalModel::QConduction(const double Tp, const double Tg, const double p, const double dp)
+	double LIISignalModel::QConduction(const double Tp, const double Tg, const double p, const double dp) const
 	{
 		if (conduction_model_ == HEAT_CONDUCTION_FREE_MOLECULAR)
 		{
@@ -224,7 +224,7 @@ namespace OpenSMOKE
 		return 0;
 	}
 
-	double LIISignalModel::QEvaporation(const double Tp, const double J)
+	double LIISignalModel::QEvaporation(const double Tp, const double J) const
 	{
 		const double deltaHvs = soot_.VaporizationHeat(Tp);	// [J/kmol]
 		const double Mvs = soot_.MolecularWeight(Tp);       // [kg/kmol]
@@ -233,7 +233,7 @@ namespace OpenSMOKE
 
 	}
 
-	double LIISignalModel::JEvaporation(const double Tp, const double Tg, const double p, const double dp)
+	double LIISignalModel::JEvaporation(const double Tp, const double Tg, const double p, const double dp) const
 	{
 		const double Mvs = soot_.MolecularWeight(Tp);			// [kg/kmol]
 		const double NFMs = FluxFreeMolecularRegime(Tp, dp);	// [1/m2/s]
@@ -244,7 +244,7 @@ namespace OpenSMOKE
 		return pi_ * (dp*dp) * Nvs*Mvs / Nav_;					// [kg/s]
 	}
 
-	double LIISignalModel::LaserTemporalIntensity(const double t)
+	double LIISignalModel::LaserTemporalIntensity(const double t) const
 	{
 		if (laser_model_ == LASER_MODEL_GAUSSIAN)
 		{
@@ -255,12 +255,12 @@ namespace OpenSMOKE
 		return 0;
 	}
 
-	double LIISignalModel::AdsorptionCrossSection(const double dp)
+	double LIISignalModel::AdsorptionCrossSection(const double dp) const
 	{
 		return pi_*pi_/lambda_ex_* (dp*dp*dp) * Em_;
 	}
 
-	double LIISignalModel::FluxFreeMolecularRegime(const double Tp, const double dp)
+	double LIISignalModel::FluxFreeMolecularRegime(const double Tp, const double dp) const
 	{
 		const double pvs = soot_.VaporPressure(Tp);				// [Pa]
 		const double Mvs = soot_.MolecularWeight(Tp);			// [kg/kmol]
@@ -269,7 +269,7 @@ namespace OpenSMOKE
 
 	}
 
-	double LIISignalModel::FluxContinuumRegime(const double Tp, const double Tg, const double p, const double dp)
+	double LIISignalModel::FluxContinuumRegime(const double Tp, const double Tg, const double p, const double dp) const
 	{
 		const double pvs = soot_.VaporPressure(Tp);									// [Pa]
 		const double Gammavs = soot_.DiffusionCoefficient(Tp, p, gas_.Gamma(Tg));	// [m2/s]
@@ -277,7 +277,7 @@ namespace OpenSMOKE
 		return 2. * pvs / kB_ / Tp * Gammavs / dp;   // [1/m2/s]
 	}
 
-	double LIISignalModel::QConductionTransitionFuchsFreeMolecular(const double Tp, const double Tdelta, const double p, const double dp)
+	double LIISignalModel::QConductionTransitionFuchsFreeMolecular(const double Tp, const double Tdelta, const double p, const double dp) const
 	{
 		const double fa = 1. / (gas_.Gamma(Tdelta) - 1.);
 		const double fb = 1. / (gas_.Gamma(Tp) - 1.);
@@ -289,7 +289,7 @@ namespace OpenSMOKE
 				(gammaStar + 1.) / (gammaStar - 1.)*(Tp / Tdelta - 1.);
 	}
 
-	double LIISignalModel::QConductionTransitionFuchsContinuum(const double Tdelta, const double Tg, const double p, const double dp)
+	double LIISignalModel::QConductionTransitionFuchsContinuum(const double Tdelta, const double Tg, const double p, const double dp) const
 	{
 		const double fa = gas_.ThermalConductivity(Tg);
 		const double fc = gas_.ThermalConductivity((Tg + Tdelta) / 2.);
@@ -313,18 +313,18 @@ namespace OpenSMOKE
 	}
 
 
-	double LIISignalModel::SootSpectralEmissivity(const double dp)
+	double LIISignalModel::SootSpectralEmissivity(const double dp) const
 	{
 		return 4.*AdsorptionCrossSection(dp) / pi_ / (dp*dp);
 	}
 
-	double LIISignalModel::Omega(const double lambda)
+	double LIISignalModel::Omega(const double lambda) const
 	{
 		return 1.;	// TODO
 	}
 
 
-	double LIISignalModel::LIISignal(const double dp, const double Tp)
+	double LIISignalModel::LIISignal(const double dp, const double Tp) const
 	{
 		// Integral calculation
 		const unsigned int n = 20;

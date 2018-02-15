@@ -59,42 +59,42 @@ namespace OpenSMOKE
 		*@param		T	temperature (in K)
 		*@return		the Cp (in J/kg/K)
 		*/
-		double MassSpecificHeatConstantPressure(const double T);
+		double MassSpecificHeatConstantPressure(const double T) const;
 
 		/**
 		*@brief Calculation of constant volume specific heat (mass units)
 		*@param		T	temperature (in K)
 		*@return		the Cv (in J/kg/K)
 		*/
-		double MassSpecificHeatConstantVolume(const double T);
+		double MassSpecificHeatConstantVolume(const double T) const;
 
 		/**
 		*@brief Calculation of constant pressure specific heat (mole units)
 		*@param		T	temperature (in K)
 		*@return		the Cp (in J/kmol/K)
 		*/
-		double MoleSpecificHeatConstantPressure(const double T);
+		double MoleSpecificHeatConstantPressure(const double T) const;
 
 		/**
 		*@brief Calculation of constant volume specific heat (mole units)
 		*@param		T	temperature (in K)
 		*@return		the Cv (in J/kmol/K)
 		*/
-		double MoleSpecificHeatConstantVolume(const double T);
+		double MoleSpecificHeatConstantVolume(const double T) const;
 
 		/**
 		*@brief Calculation of heat capacity ratio gamma=Cp/Cv
 		*@param		T	temperature (in K)
 		*@return		the heat capacity ratio (dimensionless)
 		*/
-		double Gamma(const double T);
+		double Gamma(const double T) const;
 
 		/**
 		*@brief Calculation of thermal conductivity
 		*@param		T	temperature (in K)
 		*@return		the thermal conductivity (in W/m/s)
 		*/
-		double ThermalConductivity(const double T);
+		double ThermalConductivity(const double T) const;
 
 		/**
 		*@brief Sets the molecular weight of the mixture

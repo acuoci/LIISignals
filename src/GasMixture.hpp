@@ -48,7 +48,7 @@ namespace OpenSMOKE
 		mw_ = MW;
 	}
 
-	double GasMixture::MassSpecificHeatConstantPressure(const double T)
+	double GasMixture::MassSpecificHeatConstantPressure(const double T) const
 	{
 		// N2 thermodynamic coefficients from CRECK Modeling
 
@@ -70,24 +70,24 @@ namespace OpenSMOKE
 		}
 	}
 
-	double GasMixture::MassSpecificHeatConstantVolume(const double T)
+	double GasMixture::MassSpecificHeatConstantVolume(const double T) const
 	{
 		const double Cp = MoleSpecificHeatConstantPressure(T);	// [J/kmol/K]
 
 		return (Cp - R_) / mw_;									// [J/kg/K]
 	}
 
-	double GasMixture::MoleSpecificHeatConstantPressure(const double T)
+	double GasMixture::MoleSpecificHeatConstantPressure(const double T) const
 	{
 		return MassSpecificHeatConstantPressure(T)*mw_;
 	}
 
-	double GasMixture::MoleSpecificHeatConstantVolume(const double T)
+	double GasMixture::MoleSpecificHeatConstantVolume(const double T) const
 	{
 		return MassSpecificHeatConstantVolume(T)*mw_;
 	}
 
-	double GasMixture::Gamma(const double T)
+	double GasMixture::Gamma(const double T) const
 	{
 		const double Cp = MoleSpecificHeatConstantPressure(T);	// [J/kmol/K]
 		const double Cv = Cp-R_;								// [J/kmol/K]
@@ -95,7 +95,7 @@ namespace OpenSMOKE
 		return Cp / Cv;
 	}
 
-	double GasMixture::ThermalConductivity(const double T)
+	double GasMixture::ThermalConductivity(const double T) const
 	{
 		// N2 coefficients from CRECK Modeling
 		const double logT = std::log(T);

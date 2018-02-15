@@ -62,7 +62,7 @@ namespace OpenSMOKE
 	public:
 
 		/**
-		*@brief Calculation of constant pressure specific heat (mass units)
+		*@brief Default constructor
 		*@param		gas reference to a GasMixture object
 		*@param		gas reference to a SootParticles object
 		*/
@@ -75,7 +75,7 @@ namespace OpenSMOKE
 		*@param		dp	particle diameter (in m)
 		*@return	the radiative power (in W)
 		*/
-		double QRadiation(const double Tp, const double Tg, const double dp);
+		double QRadiation(const double Tp, const double Tg, const double dp) const;
 
 		/**
 		*@brief Calculation of absorption power
@@ -83,7 +83,7 @@ namespace OpenSMOKE
 		*@param		dp	particle diameter (in m)
 		*@return	the absorption power (in W)
 		*/
-		double QAbsorption(const double t, const double dp);
+		double QAbsorption(const double t, const double dp) const;
 
 		/**
 		*@brief Calculation of thermal conduction power
@@ -93,7 +93,7 @@ namespace OpenSMOKE
 		*@param		dp	particle diameter (in m)
 		*@return	the thermal conduction power (in W)
 		*/
-		double QConduction(const double Tp, const double Tg, const double p, const double dp);
+		double QConduction(const double Tp, const double Tg, const double p, const double dp) const;
 
 		/**
 		*@brief Calculation of evaporation power
@@ -101,7 +101,7 @@ namespace OpenSMOKE
 		*@param		J   evaporation mass flow rate (in kg/s)
 		*@return	the evaporation power (in W)
 		*/
-		double QEvaporation(const double Tp, const double J);
+		double QEvaporation(const double Tp, const double J) const;
 
 		/**
 		*@brief Calculation of evaporation mass flow rate
@@ -111,7 +111,7 @@ namespace OpenSMOKE
 		*@param		dp	particle diameter (in m)
 		*@return	the evaporation mass flow rate (in kg/s)
 		*/
-		double JEvaporation(const double Tp, const double Tg, const double p, const double dp);
+		double JEvaporation(const double Tp, const double Tg, const double p, const double dp) const;
 
 		/**
 		*@brief Calculation of LII signal
@@ -119,7 +119,19 @@ namespace OpenSMOKE
 		*@param		Tp	particle temperature (in K)
 		*@return	the LII signal (in W/m)
 		*/
-		double LIISignal(const double dp, const double Tp);
+		double LIISignal(const double dp, const double Tp) const;
+
+		/**
+		*@brief Returns a reference to the gas mixture model
+		*@return	the gas mixture model
+		*/
+		const GasMixture& gas() const { return gas_; }
+
+		/**
+		*@brief Returns a reference to the soot particle model
+		*@return	the soot particle model
+		*/
+		const SootParticles& soot() const { return soot_; }
 
 	public:
 
@@ -184,14 +196,14 @@ namespace OpenSMOKE
 		*@param		t the current time (s)
 		*@return	the laser temporal intensity (in J/m2/s)
 		*/
-		double LaserTemporalIntensity(const double t);
+		double LaserTemporalIntensity(const double t) const;
 
 		/**
 		*@brief Calculation of adsorption cross section
 		*@param		dp	particle diameter (in m)
 		*@return	the adsorption cross section (in m2)
 		*/
-		double AdsorptionCrossSection(const double dp);
+		double AdsorptionCrossSection(const double dp) const;
 
 		/**
 		*@brief Calculation of flux in free molecular regime
@@ -199,7 +211,7 @@ namespace OpenSMOKE
 		*@param		dp	particle diameter (in m)
 		*@return	the flux (in 1/m2/s)
 		*/
-		double FluxFreeMolecularRegime(const double Tp, const double dp);
+		double FluxFreeMolecularRegime(const double Tp, const double dp) const;
 
 		/**
 		*@brief Calculation of flux in continuum regime
@@ -209,7 +221,7 @@ namespace OpenSMOKE
 		*@param		dp	particle diameter (in m)
 		*@return	the flux (in 1/m2/s)
 		*/
-		double FluxContinuumRegime(const double Tp, const double Tg, const double p, const double dp);
+		double FluxContinuumRegime(const double Tp, const double Tg, const double p, const double dp) const;
 
 		/**
 		*@brief Calculation of conductive power in free molecular regime for Fuchs model
@@ -219,7 +231,7 @@ namespace OpenSMOKE
 		*@param		dp		particle diameter (in m)
 		*@return	the	conductive power (in W)
 		*/
-		double QConductionTransitionFuchsFreeMolecular(const double Tp, const double Tdelta, const double p, const double dp);
+		double QConductionTransitionFuchsFreeMolecular(const double Tp, const double Tdelta, const double p, const double dp) const;
 		
 		/**
 		*@brief Calculation of conductive power in continuum regime for Fuchs model
@@ -229,20 +241,20 @@ namespace OpenSMOKE
 		*@param		dp		particle diameter (in m)
 		*@return	the	conductive power (in W)
 		*/
-		double QConductionTransitionFuchsContinuum(const double Tdelta, const double Tg, const double p, const double dp);
+		double QConductionTransitionFuchsContinuum(const double Tdelta, const double Tg, const double p, const double dp) const;
 
 		/**
 		*@brief Calculation of soot spectral emissivity
 		*@param		dp	particle diameter (in m)
 		*/
-		double SootSpectralEmissivity(const double dp);
+		double SootSpectralEmissivity(const double dp) const;
 
 		/**
 		*@brief Calculation of spectral response function of the detection system 
 		*@param		lambda	wave length (in m)
 		*@return	the spectral response function of the detection system (in 1/m)
 		*/
-		double Omega(const double lambda);
+		double Omega(const double lambda) const;
 
 	
 	private:

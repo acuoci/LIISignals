@@ -62,12 +62,12 @@ namespace OpenSMOKE
 		mv_correlation_ = flag;
 	}
 
-	double SootParticles::Density()
+	double SootParticles::Density() const
 	{
 		return 1860.;
 	}
 
-	double SootParticles::MassSpecificHeatConstantPressure(const double T)
+	double SootParticles::MassSpecificHeatConstantPressure(const double T) const
 	{
 		const double a = 1878.;			// [J/kg/K]
 		const double b = 0.1082;		// [J/kg/K2]
@@ -76,7 +76,7 @@ namespace OpenSMOKE
 		return a + b * T + c / T / T;	// [J/kg/K]
 	}
 
-	double SootParticles::DerivativeMassSpecificHeatConstantPressure(const double T)
+	double SootParticles::DerivativeMassSpecificHeatConstantPressure(const double T) const
 	{
 		const double b = 0.1082;		// [J/kg/K2]
 		const double c = -1.5149e8;		// [JK/kg]
@@ -84,7 +84,7 @@ namespace OpenSMOKE
 		return b - 2.*c / T / T / T;	// [J/kg/K2]
 	}
 
-	double SootParticles::VaporPressure(const double T)
+	double SootParticles::VaporPressure(const double T) const
 	{
 		if (pv_correlation_ == CorrelationVaporPressure::PV_HOFMAN_2007)
 		{
@@ -104,7 +104,7 @@ namespace OpenSMOKE
 		return 0;
 	}
 
-	double SootParticles::MolecularWeight(const double T)
+	double SootParticles::MolecularWeight(const double T) const
 	{
 		if (mv_correlation_ == CorrelationMolecularWeight::MV_HOFMAN_2007)
 		{
@@ -119,13 +119,13 @@ namespace OpenSMOKE
 		return 0;
 	}
 
-	double SootParticles::CrossSection(const double T)
+	double SootParticles::CrossSection(const double T) const
 	{
 		const double M = MolecularWeight(T) / 1000.;	// [kg/mol]
 		return (1.8e-19 +M*(-1.857e-17 + M*(1.404e-15 +M*(-2.593e-14 + M*(2.075e-13 - M*6.667e-13)))));   //[m2]
 	}
 
-	double SootParticles::VaporizationHeat(const double T)
+	double SootParticles::VaporizationHeat(const double T) const
 	{
 		if (hv_correlation_ == CorrelationVaporizationHeat::HV_HOFMAN_2007)
 		{
@@ -140,7 +140,7 @@ namespace OpenSMOKE
 		return 0;
 	}
 
-	double SootParticles::DiffusionCoefficient(const double T, const double p, const double gamma)
+	double SootParticles::DiffusionCoefficient(const double T, const double p, const double gamma) const
 	{
 		const double Mv = MolecularWeight(T);		// [kg/kmol]
 		const double sigma = CrossSection(T);		// [m2]

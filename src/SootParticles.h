@@ -65,14 +65,14 @@ namespace OpenSMOKE
 		*@brief		Calculation of density of soot
 		*@return	density (in kg/m3)
 		*/
-		double Density();
+		double Density() const;
 
 		/**
 		*@brief Calculation of constant pressure specific heat (mass units)
 		*@param		T	temperature (in K)
 		*@return		the Cp (in J/kg/K)
 		*/
-		double MassSpecificHeatConstantPressure(const double T);
+		double MassSpecificHeatConstantPressure(const double T) const;
 
 		/**
 		*@brief Calculation of derivative of constant pressure specific heat
@@ -80,35 +80,35 @@ namespace OpenSMOKE
 		*@param		T	temperature (in K)
 		*@return		the derivative dCp/dT (in J/kg/K2)
 		*/
-		double DerivativeMassSpecificHeatConstantPressure(const double T);
+		double DerivativeMassSpecificHeatConstantPressure(const double T) const;
 
 		/**
 		*@brief Calculation of vapor pressure 
 		*@param		T	temperature (in K)
 		*@return		vapor pressure (in Pa)
 		*/
-		double VaporPressure(const double T);
+		double VaporPressure(const double T) const;
 
 		/**
 		*@brief Calculation of molecular weight of soot vapors
 		*@param		T	temperature (in K)
 		*@return		molecular weight (in kg/kmol)
 		*/
-		double MolecularWeight(const double T);
+		double MolecularWeight(const double T) const;
 
 		/**
 		*@brief Calculation of molecular cross section of soot vapors
 		*@param		T	temperature (in K)
 		*@return		cross section (in m2)
 		*/
-		double CrossSection(const double T);
+		double CrossSection(const double T) const;
 
 		/**
 		*@brief Calculation of vaporization heat
 		*@param		T	temperature (in K)
 		*@return		vaporization heat (in J/kmol)
 		*/
-		double VaporizationHeat(const double T);
+		double VaporizationHeat(const double T) const;
 
 		/**
 		*@brief Calculation of diffusion coefficient of soot vapors
@@ -117,7 +117,7 @@ namespace OpenSMOKE
 		*@param		gamma	heat capacity ratio of gaseous mixture
 		*@return	the diffusion coefficient (in m2/s)
 		*/
-		double DiffusionCoefficient(const double T, const double p, const double gamma);
+		double DiffusionCoefficient(const double T, const double p, const double gamma) const;
 
 
 	public:

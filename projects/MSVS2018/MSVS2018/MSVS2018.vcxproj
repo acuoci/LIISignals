@@ -119,6 +119,8 @@
     <ClInclude Include="..\..\..\src\GasMixture.hpp" />
     <ClInclude Include="..\..\..\src\LIISignalModel.h" />
     <ClInclude Include="..\..\..\src\LIISignalModel.hpp" />
+    <ClInclude Include="..\..\..\src\LIISignalSimulator.h" />
+    <ClInclude Include="..\..\..\src\LIISignalSimulator.hpp" />
     <ClInclude Include="..\..\..\src\LogNormalDistribution.h" />
     <ClInclude Include="..\..\..\src\LogNormalDistribution.hpp" />
     <ClInclude Include="..\..\..\src\RungeKutta4thOrder.h" />
