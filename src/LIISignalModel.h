@@ -113,6 +113,14 @@ namespace OpenSMOKE
 		*/
 		double JEvaporation(const double Tp, const double Tg, const double p, const double dp);
 
+		/**
+		*@brief Calculation of LII signal
+		*@param		dp	particle diameter (in m)
+		*@param		Tp	particle temperature (in K)
+		*@return	the LII signal (in W/m)
+		*/
+		double LIISignal(const double dp, const double Tp);
+
 	public:
 
 		/**
@@ -204,12 +212,6 @@ namespace OpenSMOKE
 		double FluxContinuumRegime(const double Tp, const double Tg, const double p, const double dp);
 
 		/**
-		*@brief Calculation of soot spectral emissivity
-		*@param		dp	particle diameter (in m)
-		*/
-		double SootSpectralEmissivity(const double dp);
-
-		/**
 		*@brief Calculation of conductive power in free molecular regime for Fuchs model
 		*@param		Tp		particle temperature (in K)
 		*@param		Tdelta	boundary layer temperature (in K)
@@ -219,7 +221,6 @@ namespace OpenSMOKE
 		*/
 		double QConductionTransitionFuchsFreeMolecular(const double Tp, const double Tdelta, const double p, const double dp);
 		
-
 		/**
 		*@brief Calculation of conductive power in continuum regime for Fuchs model
 		*@param		Tdelta	boundary layer temperature (in K)
@@ -230,6 +231,18 @@ namespace OpenSMOKE
 		*/
 		double QConductionTransitionFuchsContinuum(const double Tdelta, const double Tg, const double p, const double dp);
 
+		/**
+		*@brief Calculation of soot spectral emissivity
+		*@param		dp	particle diameter (in m)
+		*/
+		double SootSpectralEmissivity(const double dp);
+
+		/**
+		*@brief Calculation of spectral response function of the detection system 
+		*@param		lambda	wave length (in m)
+		*@return	the spectral response function of the detection system (in 1/m)
+		*/
+		double Omega(const double lambda);
 
 	
 	private:
@@ -253,6 +266,9 @@ namespace OpenSMOKE
 
 		LaserTemporalIntensityModel laser_model_;	//!< model for temporal laser intensity
 
+		double lambda_min_;			//!< Bandpass wavelength min (in m)
+		double lambda_max_;			//!< Bandpass wavelength max (in m)
+
 
 	private:
 
@@ -261,6 +277,8 @@ namespace OpenSMOKE
 		static const double R_;			//!< the constant of ideal gases (in J/kmol/K)
 		static const double pi_;		//!< pi
 		static const double Nav_;		//!< Avogadro's number (in 1/kmol)
+		static const double h_;			//!< Planck's constant (in m2.kg/s)
+		static const double c_;			//!< speed of light (in m/s)
 
 	};
 

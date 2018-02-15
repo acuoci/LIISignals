@@ -41,7 +41,8 @@ namespace OpenSMOKE
 	const double LIISignalModel::R_ = 8314.4598;			// [J/kmol/K]
 	const double LIISignalModel::pi_ = 3.14159265359;		// [-]
 	const double LIISignalModel::Nav_ = 6.022e26;			// [1/kmol]
-
+	const double LIISignalModel::h_ = 6.62607004e-34;		// [m2.kg/s]
+	const double LIISignalModel::c_ = 299792458;			// [m/s]
 
 	LIISignalModel::LIISignalModel(GasMixture& gas, SootParticles& soot) :
 		gas_(gas),
@@ -75,6 +76,12 @@ namespace OpenSMOKE
 			phi_ = 1000.;							// laser fluence (in J/m2)
 			mu_ = 60e-9;							// mean time of Gaussian signal (in s)
 			FHMW_ = 7e-9;							// FWHM of temporal laser beam profile (s)
+		}
+
+		// Detection window
+		{
+			lambda_min_ = 545e-9;
+			lambda_max_ = 555e-9;
 		}
 	}
 
@@ -175,8 +182,9 @@ namespace OpenSMOKE
 
 		else if (conduction_model_ == HEAT_CONDUCTION_TRANSITION_FUCHS)
 		{
-			double Tmin = 0.999999*Tg + 0.000001*Tp;
-			double Tmax = 0.999999*Tp + 0.000001*Tg;
+			const double eps = 1e-6;
+			double Tmin = (1.-eps)*Tg + eps*Tp;
+			double Tmax = (1.-eps)*Tp + eps*Tg;
 			double Tdelta = (Tg+Tp)/2.;
 
 			double fmin =	QConductionTransitionFuchsContinuum(Tmin, Tg, p, dp) -
@@ -208,13 +216,7 @@ namespace OpenSMOKE
 					fdelta =	QConductionTransitionFuchsContinuum(Tdelta, Tg, p, dp) -
 								QConductionTransitionFuchsFreeMolecular(Tp, Tdelta, p, dp);
 				}
-
-			//	if (Tp > 2999)
-				//	std::cout << Tdelta << std::endl;
 			}
-
-			//if (Tp > 2999)
-			//	getchar();
 
 			return QConductionTransitionFuchsFreeMolecular(Tp, Tdelta, p, dp);;
 		}
@@ -275,11 +277,6 @@ namespace OpenSMOKE
 		return 2. * pvs / kB_ / Tp * Gammavs / dp;   // [1/m2/s]
 	}
 
-	double LIISignalModel::SootSpectralEmissivity(const double dp)
-	{
-		return 4.*AdsorptionCrossSection(dp)/pi_/(dp*dp);
-	}
-
 	double LIISignalModel::QConductionTransitionFuchsFreeMolecular(const double Tp, const double Tdelta, const double p, const double dp)
 	{
 		const double fa = 1. / (gas_.Gamma(Tdelta) - 1.);
@@ -313,5 +310,40 @@ namespace OpenSMOKE
 		const double delta = std::pow(dp/2., 3.)/lambda/lambda * coefficient - dp/2.;
 
 		return 4.*pi_*(delta + dp / 2.)*I;
+	}
+
+
+	double LIISignalModel::SootSpectralEmissivity(const double dp)
+	{
+		return 4.*AdsorptionCrossSection(dp) / pi_ / (dp*dp);
+	}
+
+	double LIISignalModel::Omega(const double lambda)
+	{
+		return 1.;	// TODO
+	}
+
+
+	double LIISignalModel::LIISignal(const double dp, const double Tp)
+	{
+		// Integral calculation
+		const unsigned int n = 20;
+		const double dlambda = (lambda_max_ - lambda_min_) / double(n - 1);
+		const double epsilon = SootSpectralEmissivity(dp);
+
+		double I = 0.;
+		for (unsigned int i = 0; i < n; i++)
+		{
+			const double lambda_a = lambda_min_ + i * dlambda;
+			const double lambda_b = lambda_a + dlambda;
+			const double omega_a = Omega(lambda_a);
+			const double omega_b = Omega(lambda_b);
+			const double f_a = omega_a * epsilon / std::pow(lambda_a, 5.) / (std::exp(h_*c_ / lambda_a / kB_ / Tp) - 1.);
+			const double f_b = omega_b * epsilon / std::pow(lambda_b, 5.) / (std::exp(h_*c_ / lambda_b / kB_ / Tp) - 1.);
+
+			I += dlambda * 0.50*(f_a + f_b);
+		}
+
+		return 2 * (pi_*pi_)*h_*(c_*c_)*(dp*dp)*I;
 	}
 }
