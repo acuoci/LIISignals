@@ -140,12 +140,20 @@ namespace OpenSMOKE
 		*/
 		void SetCorrelationMolecularWeight(const CorrelationMolecularWeight flag);
 
+		/**
+		*@brief Sets soot particle density
+		*@param	density the soot particle density (in kg/m3)
+		*/
+		void SetDensity(const double density);
+
 
 	private:
 
 		CorrelationMolecularWeight	mv_correlation_;		//!< the correlation for evaluating the molecular weight
 		CorrelationVaporPressure	pv_correlation_;		//!< the correlation for evaluating the vapor pressure
 		CorrelationVaporizationHeat hv_correlation_;		//!< the correlation for evaluating the vaporization heat
+
+		double density_;									//!< density of soot particles (in kg/m3)
 
 		static const double kB_;	//!< the Boltzmann constant (in m2.kg/s2/K)
 		static const double R_;		//!< the constant of ideal gases (in J/kmol/K)

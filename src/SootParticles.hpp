@@ -45,6 +45,7 @@ namespace OpenSMOKE
 		pv_correlation_ = CorrelationVaporPressure::PV_HOFMAN_2007;
 		mv_correlation_ = CorrelationMolecularWeight::MV_HOFMAN_2007;
 		hv_correlation_ = CorrelationVaporizationHeat::HV_HOFMAN_2007;
+		density_ = 1860.;	
 	}
 
 	void SootParticles::SetCorrelationVaporPressure(const CorrelationVaporPressure flag)
@@ -62,9 +63,14 @@ namespace OpenSMOKE
 		mv_correlation_ = flag;
 	}
 
+	void SootParticles::SetDensity(const double density)
+	{
+		density_ = density;
+	}
+
 	double SootParticles::Density() const
 	{
-		return 1860.;
+		return density_;
 	}
 
 	double SootParticles::MassSpecificHeatConstantPressure(const double T) const

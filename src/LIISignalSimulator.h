@@ -161,7 +161,7 @@ namespace OpenSMOKE
 		double tf_;						//!< final time of integration (in s)
 		double dt_;						//!< time step of integration (in s)
 
-		ParticleSizeDistributionFunction distribution_;			//!< particle size diameter distribution function
+		ParticleSizeDistributionFunction distribution_;		//!< particle size diameter distribution function
 		OpenSMOKE::LogNormalDistribution* log_normal_pdf_;	//!< pointer to a log-normal distribution
 
 	private:
