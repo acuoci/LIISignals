@@ -1,0 +1,36 @@
+// Distribution type: monodispersed vs polydispersed
+monodispersed
+// Heat conduction model: free-molecular, continuum, transition-mccoy-cha, transition-fuchs
+free-molecular
+// Rectangular detection bandpass: bandpass wavelength min. (in nm)	
+545
+// Rectangular detection bandpass: Bandpass wavelength max. (in nm)		
+555
+// Laser wavelength (in nm)
+1064
+// Full width at half maximum of temporal laser beam profile (in ns)
+7
+// Soot absorption function E(m)
+0.4
+// Laser fluence (in J/cm2)
+0.1
+// Gas temperature (in K)
+1700.
+// Gas pressure (in Pa)
+1e5
+// Molecular weight of gas mixture (in kg/kmol)	
+28
+// Thermal accommodation coefficient alpha	
+0.3
+// Mass accommodation coefficient beta
+1
+// Soot particle density (in kg/m3)
+1860.
+// Initial particle temperature (in K)
+1700.10
+// Mean diameter dp (in nm) for monodispersed/polydispersed distributions
+21
+// Standard deviation sigmap (in nm) (for polydispersed distributions only)
+3.7
+// Number of quadrature points (for polydispersed distributions only)
+50
