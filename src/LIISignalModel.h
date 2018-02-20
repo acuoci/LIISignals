@@ -189,6 +189,13 @@ namespace OpenSMOKE
 		*/
 		void SetHeatCondutionModel(const HeatCondutionModel flag);
 
+		/**
+		*@brief Sets detection window
+		*@param lambda_min bandpass wavelength min. (in m)
+		*@param lambda_max bandpass wavelength max. (in m)
+		*/
+		void SetDetectionWindow(const double lambda_min, const double lambda_max);
+
 	private:
 
 		/**

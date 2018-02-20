@@ -130,6 +130,12 @@ namespace OpenSMOKE
 		FHMW_ = FHMW;
 	}
 
+	void LIISignalModel::SetDetectionWindow(const double lambda_min, const double lambda_max)
+	{
+		lambda_min_ = lambda_min;
+		lambda_max_ = lambda_max;
+	}
+
 	double LIISignalModel::QRadiation(const double Tp, const double Tg, const double dp) const
 	{
 		return pi_ * (dp*dp)*theta_*sigmaSB_*(std::pow(Tp, 4.) - std::pow(Tg, 4.));
