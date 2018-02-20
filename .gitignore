@@ -9,6 +9,11 @@
 *.sh
 *.VC.db-*
 
+#Output files
+#############
+*.out
+*.dat
+
 #Autotools
 #########################
 projects/Linux/Makefile
