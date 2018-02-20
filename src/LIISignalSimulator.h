@@ -37,6 +37,7 @@
 #ifndef OpenSMOKE_LIISignalSimulator_H
 #define OpenSMOKE_LIISignalSimulator_H
 
+#include "LogNormalDistribution.h"
 #include "LIISignalModel.h"
 
 namespace OpenSMOKE
@@ -48,6 +49,10 @@ namespace OpenSMOKE
 
 	class LIISignalSimulator
 	{
+
+	public:
+
+		enum ParticleSizeDistributionFunction { DISTRIBUTION_MONODISPERSED, DISTRIBUTION_LOGNORMAL };
 	
 	public:
 
@@ -112,10 +117,30 @@ namespace OpenSMOKE
 		*/
 		void SetTimeStep(const double dt);
 
+		/**
+		*@brief Sets the log-normal particle size function
+		*@param	log_normal_pdf the log normal particle size distribution function
+		*/
+		void SetLogNormalParticleSizeDistributionFunction(OpenSMOKE::LogNormalDistribution& log_normal_pdf);
+
+	private:
+
+		/**
+		*@brief Simulates the temporal evolution of temperature and mass of soot particles according to a monodispersed distribution
+		*/
+		void SolveMonodispersedDistribution();
+
+		/**
+		*@brief Simulates the temporal evolution of temperature and mass of soot particles according to a log-normal distribution
+		*/
+		void SolveLogNormalDistribution();
+
 	
 	private:
 
 		LIISignalModel&	lii_;			//!< lii signal model
+
+		
 
 		std::vector<double> t_;			//!< solution vector: time (in s)
 		std::vector<double> Tp_;		//!< solution vector: soot particle temperature (in K)
@@ -135,6 +160,9 @@ namespace OpenSMOKE
 		double Tg_;						//!< gas mixture temperature (in K)
 		double tf_;						//!< final time of integration (in s)
 		double dt_;						//!< time step of integration (in s)
+
+		ParticleSizeDistributionFunction distribution_;			//!< particle size diameter distribution function
+		OpenSMOKE::LogNormalDistribution* log_normal_pdf_;	//!< pointer to a log-normal distribution
 
 	private:
 
