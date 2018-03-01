@@ -46,7 +46,7 @@ namespace OpenSMOKE
 
 	class LogNormalDistribution
 	{
-	
+
 	public:
 
 		/**
@@ -148,7 +148,7 @@ namespace OpenSMOKE
 		double sigmap2_;			//!< variance
 		double gamma1_;				//!< skewness
 		double gamma2_;				//!< kurtosis
-			
+
 		unsigned int n_;			//!< number of quadrature points
 
 		std::vector<double> x_;		//!< positions of quadrature points

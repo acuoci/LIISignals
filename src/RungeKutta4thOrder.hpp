@@ -38,7 +38,7 @@ namespace OpenSMOKE
 {
 	RungeKutta4thOrder::RungeKutta4thOrder()
 	{
-		
+
 	}
 
 	void RungeKutta4thOrder::SetInitialConditions(const unsigned int n, const double tInitial, const double* uInitial)
@@ -85,13 +85,13 @@ namespace OpenSMOKE
 
 		// Resize solution matrix
 		for (unsigned int i = 0; i < n_ + 1; i++)
-			solution_[i].resize(nsteps+1);
+			solution_[i].resize(nsteps + 1);
 
 		// Initial conditions
 		u0_ = uInitial_;
 		solution_[0][0] = tInitial_;
 		for (unsigned int i = 0; i < n_; i++)
-			solution_[i+1][0] = u0_[i];
+			solution_[i + 1][0] = u0_[i];
 
 		// Loop
 		for (unsigned int k = 0; k < nsteps; k++)
@@ -104,7 +104,7 @@ namespace OpenSMOKE
 
 			const double t1 = t0 + dt_ / 2.;
 			for (unsigned int i = 0; i < n_; i++)
-				u1_[i] = u0_[i] + dt_*f0_[i]/2.;
+				u1_[i] = u0_[i] + dt_ * f0_[i] / 2.;
 			f_(t1, u1_.data(), f1_.data());
 
 			const double t2 = t0 + dt_ / 2.;
@@ -118,11 +118,11 @@ namespace OpenSMOKE
 			f_(t3, u3_.data(), f3_.data());
 
 			for (unsigned int i = 0; i < n_; i++)
-				u0_[i] += dt_ * ( f0_[i] + 2.*f1_[i] + 2.*f2_[i] + f3_[i])/6.;
+				u0_[i] += dt_ * (f0_[i] + 2.*f1_[i] + 2.*f2_[i] + f3_[i]) / 6.;
 
-			solution_[0][k+1] = t3;
+			solution_[0][k + 1] = t3;
 			for (unsigned int i = 0; i < n_; i++)
-				solution_[i + 1][k+1] = u0_[i];
+				solution_[i + 1][k + 1] = u0_[i];
 		}
 	}
 }

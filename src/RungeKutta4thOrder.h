@@ -94,7 +94,7 @@ namespace OpenSMOKE
 		*@brief		Returns the solution
 		*@return	the solution matrix (rows=number of steps, colums=time|unknown1|unknown2|...)
 		*/
-		const std::vector< std::vector<double> >& solution() const { return solution_;  }
+		const std::vector< std::vector<double> >& solution() const { return solution_; }
 
 	private:
 
@@ -104,7 +104,7 @@ namespace OpenSMOKE
 		void MemoryAllocation();
 
 		/**
-		*@brief Pointer to the ODE function 
+		*@brief Pointer to the ODE function
 		*/
 		void(*f_)(const double t, const double* u, double* dudt);
 

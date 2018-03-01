@@ -54,11 +54,13 @@ namespace OpenSMOKE
 
 		enum LaserTemporalIntensityModel { LASER_MODEL_GAUSSIAN };
 
-		enum HeatCondutionModel {	HEAT_CONDUCTION_FREE_MOLECULAR, 
-									HEAT_CONDUCTION_CONTINUUM,
-									HEAT_CONDUCTION_TRANSITION_MCCOY_CHA,
-									HEAT_CONDUCTION_TRANSITION_FUCHS };
-	
+		enum HeatCondutionModel {
+			HEAT_CONDUCTION_FREE_MOLECULAR,
+			HEAT_CONDUCTION_CONTINUUM,
+			HEAT_CONDUCTION_TRANSITION_MCCOY_CHA,
+			HEAT_CONDUCTION_TRANSITION_FUCHS
+		};
+
 	public:
 
 		/**
@@ -239,7 +241,7 @@ namespace OpenSMOKE
 		*@return	the	conductive power (in W)
 		*/
 		double QConductionTransitionFuchsFreeMolecular(const double Tp, const double Tdelta, const double p, const double dp) const;
-		
+
 		/**
 		*@brief Calculation of conductive power in continuum regime for Fuchs model
 		*@param		Tdelta	boundary layer temperature (in K)
@@ -257,16 +259,16 @@ namespace OpenSMOKE
 		double SootSpectralEmissivity(const double dp) const;
 
 		/**
-		*@brief Calculation of spectral response function of the detection system 
+		*@brief Calculation of spectral response function of the detection system
 		*@param		lambda	wave length (in m)
 		*@return	the spectral response function of the detection system (in 1/m)
 		*/
 		double Omega(const double lambda) const;
 
-	
+
 	private:
 
-		GasMixture&		gas_;		//!< gas mixture model
+		GasMixture & gas_;		//!< gas mixture model
 		SootParticles&	soot_;		//!< soot particles model
 
 		double theta_;				//!< total emission coefficient (for black-body equal to 1)

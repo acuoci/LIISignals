@@ -53,7 +53,7 @@ namespace OpenSMOKE
 	public:
 
 		enum ParticleSizeDistributionFunction { DISTRIBUTION_MONODISPERSED, DISTRIBUTION_LOGNORMAL };
-	
+
 	public:
 
 		/**
@@ -135,12 +135,12 @@ namespace OpenSMOKE
 		*/
 		void SolveLogNormalDistribution();
 
-	
+
 	private:
 
-		LIISignalModel&	lii_;			//!< lii signal model
+		LIISignalModel & lii_;			//!< lii signal model
 
-		
+
 
 		std::vector<double> t_;			//!< solution vector: time (in s)
 		std::vector<double> Tp_;		//!< solution vector: soot particle temperature (in K)

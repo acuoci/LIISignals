@@ -46,7 +46,7 @@ namespace OpenSMOKE
 
 	class GasMixture
 	{
-	
+
 	public:
 
 		/**
@@ -108,7 +108,7 @@ namespace OpenSMOKE
 		*/
 		double M() const { return mw_; }
 
-	
+
 	private:
 
 		double mw_;					//!< the gas molecular weight (in kg/kmol)

@@ -50,10 +50,10 @@ namespace OpenSMOKE
 
 	public:
 
-		enum CorrelationVaporPressure		{ PV_HOFMAN_2007, PV_GOULDER_2002, PV_MICHELSEN_2008 };
-		enum CorrelationVaporizationHeat	{ HV_HOFMAN_2007, HV_MICHELSEN_2008 };
-		enum CorrelationMolecularWeight		{ MV_HOFMAN_2007, MV_MICHELSEN_2008 };
-	
+		enum CorrelationVaporPressure { PV_HOFMAN_2007, PV_GOULDER_2002, PV_MICHELSEN_2008 };
+		enum CorrelationVaporizationHeat { HV_HOFMAN_2007, HV_MICHELSEN_2008 };
+		enum CorrelationMolecularWeight { MV_HOFMAN_2007, MV_MICHELSEN_2008 };
+
 	public:
 
 		/**
@@ -83,7 +83,7 @@ namespace OpenSMOKE
 		double DerivativeMassSpecificHeatConstantPressure(const double T) const;
 
 		/**
-		*@brief Calculation of vapor pressure 
+		*@brief Calculation of vapor pressure
 		*@param		T	temperature (in K)
 		*@return		vapor pressure (in Pa)
 		*/
@@ -124,7 +124,7 @@ namespace OpenSMOKE
 
 		/**
 		*@brief Sets the correlation to be adopted for vapor pressure calculation
-		*@param	flag the correlation 
+		*@param	flag the correlation
 		*/
 		void SetCorrelationVaporPressure(const CorrelationVaporPressure flag);
 

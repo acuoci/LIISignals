@@ -57,11 +57,11 @@ namespace OpenSMOKE
 
 		if (T <= Ti)		// Low-temperature region
 		{
-			return (1.143621e+03+T*(-7.243422e-01+T*(1.588338e-03+T*(-1.114793e-06+T* 2.738496e-10))));		// [J/kg/K]
+			return (1.143621e+03 + T * (-7.243422e-01 + T * (1.588338e-03 + T * (-1.114793e-06 + T * 2.738496e-10))));		// [J/kg/K]
 		}
 		else if (T <= Tm)	// High-temperature region
 		{
-			return (8.051735e+02 + T * (5.649814e-01 + T * (-2.535527e-04 + T * (5.466132e-08 - T*4.591919e-12))));		// [J/kg/K]
+			return (8.051735e+02 + T * (5.649814e-01 + T * (-2.535527e-04 + T * (5.466132e-08 - T * 4.591919e-12))));		// [J/kg/K]
 		}
 		else
 		{
@@ -90,7 +90,7 @@ namespace OpenSMOKE
 	double GasMixture::Gamma(const double T) const
 	{
 		const double Cp = MoleSpecificHeatConstantPressure(T);	// [J/kmol/K]
-		const double Cv = Cp-R_;								// [J/kmol/K]
+		const double Cv = Cp - R_;								// [J/kmol/K]
 
 		return Cp / Cv;
 	}
@@ -99,6 +99,6 @@ namespace OpenSMOKE
 	{
 		// N2 coefficients from CRECK Modeling
 		const double logT = std::log(T);
-		return std::exp(1.188512e-02 + logT*(-2.896464e+00 + logT*(5.514232e-01 - logT*2.729252e-02)));  // [W/m/K]
+		return std::exp(1.188512e-02 + logT * (-2.896464e+00 + logT * (5.514232e-01 - logT * 2.729252e-02)));  // [W/m/K]
 	}
 }

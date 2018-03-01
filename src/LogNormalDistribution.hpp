@@ -51,22 +51,22 @@ namespace OpenSMOKE
 		c2_ = 2.*ln_sigma_*ln_sigma_;
 
 		// Maximum value
-		max_x_ = std::exp(-ln_sigma_*ln_sigma_ + ln_cmd_);
+		max_x_ = std::exp(-ln_sigma_ * ln_sigma_ + ln_cmd_);
 		max_ = (*this)(max_x_);
 
 		// Boundaries for numerical integration
 		const double x_tilde = 1e-6;
 		const double ln_sigma_2_ = ln_sigma_ * ln_sigma_;
-		max_bc_ =	std::exp(ln_sigma_2_ + ln_cmd_ +
-					std::sqrt(-2.*ln_sigma_2_*ln_cmd_ + 2.*std::log(cmd_/x_tilde)*ln_sigma_2_));
-		min_bc_ =	std::exp(ln_sigma_2_ + ln_cmd_ -
-					std::sqrt(-2.*ln_sigma_2_*ln_cmd_ + 2.*std::log(cmd_/x_tilde)*ln_sigma_2_));
+		max_bc_ = std::exp(ln_sigma_2_ + ln_cmd_ +
+			std::sqrt(-2.*ln_sigma_2_*ln_cmd_ + 2.*std::log(cmd_ / x_tilde)*ln_sigma_2_));
+		min_bc_ = std::exp(ln_sigma_2_ + ln_cmd_ -
+			std::sqrt(-2.*ln_sigma_2_*ln_cmd_ + 2.*std::log(cmd_ / x_tilde)*ln_sigma_2_));
 
 		// Moments
 		mu_ = std::exp(ln_cmd_ + ln_sigma_2_ / 2.);
 		sigmap2_ = (std::exp(ln_sigma_2_) - 1.)*std::exp(2.*ln_cmd_ + ln_sigma_2_);
-		gamma1_ = std::sqrt((std::exp(ln_sigma_2_) - 1.))*(2.+std::exp(ln_sigma_2_));
-		gamma2_ = std::exp(4.*ln_sigma_2_)+2.*std::exp(3.*ln_sigma_2_)+3.*std::exp(2.*ln_sigma_2_)-6.;
+		gamma1_ = std::sqrt((std::exp(ln_sigma_2_) - 1.))*(2. + std::exp(ln_sigma_2_));
+		gamma2_ = std::exp(4.*ln_sigma_2_) + 2.*std::exp(3.*ln_sigma_2_) + 3.*std::exp(2.*ln_sigma_2_) - 6.;
 
 		// Summary on the screen
 		std::cout << "--------------------------------------------" << std::endl;
@@ -92,7 +92,7 @@ namespace OpenSMOKE
 
 	double LogNormalDistribution::operator() (const double x) const
 	{
-		return c1_ / x * std::exp(-std::pow(std::log(x) - ln_cmd_,2.) / c2_);
+		return c1_ / x * std::exp(-std::pow(std::log(x) - ln_cmd_, 2.) / c2_);
 	}
 
 	void LogNormalDistribution::SetNumberofIntervals(const unsigned int n)

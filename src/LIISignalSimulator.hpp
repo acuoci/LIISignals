@@ -138,7 +138,7 @@ namespace OpenSMOKE
 		Qeva_.resize(n);
 		Qrad_.resize(n);
 		Qtot_.resize(n);
-	
+
 		for (unsigned int k = 0; k < n; k++)
 		{
 			dp_[k] = std::pow(6.*mp_[k] / pi_ / lii_.soot().Density(), 1. / 3.);
@@ -151,13 +151,13 @@ namespace OpenSMOKE
 			Qeva_[k] = lii_.QEvaporation(Tp_[k], J_[k]);
 			Qrad_[k] = lii_.QRadiation(Tp_[k], Tg_, dp_[k]);
 			Qtot_[k] = Qabs_[k] - (Qcon_[k] + Qeva_[k] + Qrad_[k]);
-			
+
 		}
 	}
 
 	void LIISignalSimulator::SolveLogNormalDistribution()
 	{
-		
+
 		std::vector<double> x = log_normal_pdf_->x();
 		std::vector<double> p = log_normal_pdf_->p();
 
@@ -196,7 +196,7 @@ namespace OpenSMOKE
 				Qrad_.resize(n);	std::fill(Qrad_.begin(), Qrad_.end(), 0.);
 				Qtot_.resize(n);	std::fill(Qtot_.begin(), Qtot_.end(), 0.);
 			}
-			
+
 			for (unsigned int k = 0; k < n; k++)
 			{
 				t_[k] = rk4.solution()[0][k];
@@ -205,14 +205,14 @@ namespace OpenSMOKE
 
 				dp_[k] += p[i] * std::pow(6.*rk4.solution()[2][k] / pi_ / lii_.soot().Density(), 1. / 3.);
 
-				J_[k]    += p[i] * lii_.JEvaporation(Tp_[k], Tg_, p_, dp_[k]);
+				J_[k] += p[i] * lii_.JEvaporation(Tp_[k], Tg_, p_, dp_[k]);
 				SLII_[k] += p[i] * lii_.LIISignal(dp_[k], Tp_[k]);
 
 				Qabs_[k] += p[i] * lii_.QAbsorption(t_[k], dp_[k]);
 				Qcon_[k] += p[i] * lii_.QConduction(Tp_[k], Tg_, p_, dp_[k]);
 				Qeva_[k] += p[i] * lii_.QEvaporation(Tp_[k], J_[k]);
 				Qrad_[k] += p[i] * lii_.QRadiation(Tp_[k], Tg_, dp_[k]);
-				
+
 				Qtot_[k] += Qabs_[k] - (Qcon_[k] + Qeva_[k] + Qrad_[k]);
 			}
 		}
@@ -239,9 +239,9 @@ namespace OpenSMOKE
 
 		// Heat balance equation
 		const bool include_derivative_of_cp_ = false;
-		double coefficient = lii_.soot().MassSpecificHeatConstantPressure(Tp);		
+		double coefficient = lii_.soot().MassSpecificHeatConstantPressure(Tp);
 		if (include_derivative_of_cp_ == true)
-			coefficient += Tp*lii_.soot().DerivativeMassSpecificHeatConstantPressure(Tp);
+			coefficient += Tp * lii_.soot().DerivativeMassSpecificHeatConstantPressure(Tp);
 		const double dTpdt = Qtot / mp / coefficient;
 
 		// Mass balance equation

@@ -45,7 +45,7 @@ namespace OpenSMOKE
 		pv_correlation_ = PV_HOFMAN_2007;
 		mv_correlation_ = MV_HOFMAN_2007;
 		hv_correlation_ = HV_HOFMAN_2007;
-		density_ = 1860.;	
+		density_ = 1860.;
 	}
 
 	void SootParticles::SetCorrelationVaporPressure(const CorrelationVaporPressure flag)
@@ -94,17 +94,17 @@ namespace OpenSMOKE
 	{
 		if (pv_correlation_ == PV_HOFMAN_2007)
 		{
-			return std::exp(-111.4 + T*(0.0906 +T*(-2.764e-5 + T*(4.175e-9 - T*2.488e-13))));   // [Pa]
+			return std::exp(-111.4 + T * (0.0906 + T * (-2.764e-5 + T * (4.175e-9 - T * 2.488e-13))));   // [Pa]
 		}
 
 		else if (pv_correlation_ == PV_GOULDER_2002)
 		{
-			return std::exp(-122.96 + T*(0.0906 + T*(-2.764e-5 + T*(4.175e-9 - T*2.488e-13)))) * 101325;   // [Pa]
+			return std::exp(-122.96 + T * (0.0906 + T * (-2.764e-5 + T * (4.175e-9 - T * 2.488e-13)))) * 101325;   // [Pa]
 		}
 
 		else if (pv_correlation_ == PV_MICHELSEN_2008)
 		{
-			return std::exp(-198.11 + T*(0.20732 +T*(-9.6899e-05 + T*(2.3826e-08 + T*(-2.9423e-12 + T*1.4363e-16))))) * 1e5;   //[Pa]
+			return std::exp(-198.11 + T * (0.20732 + T * (-9.6899e-05 + T * (2.3826e-08 + T * (-2.9423e-12 + T * 1.4363e-16))))) * 1e5;   //[Pa]
 		}
 
 		return 0;
@@ -114,12 +114,12 @@ namespace OpenSMOKE
 	{
 		if (mv_correlation_ == MV_HOFMAN_2007)
 		{
-			return (0.01718 + T*(6.865e-7 + T*(2.996e-9 +T*(-8.595e-13 + T*1.049e-16)))) * 1000;   // [kg/kmol]
+			return (0.01718 + T * (6.865e-7 + T * (2.996e-9 + T * (-8.595e-13 + T * 1.049e-16)))) * 1000;   // [kg/kmol]
 		}
 
 		else if (mv_correlation_ == MV_MICHELSEN_2008)
 		{
-			return (82.299 + T*(-0.19406 + T*(1.9146e-4 + T*(-8.4923e-8 + T*(1.9306e-11 +T*(-2.2032e-15 + T*1.0052e-19))))));   //[kg/kmol]
+			return (82.299 + T * (-0.19406 + T * (1.9146e-4 + T * (-8.4923e-8 + T * (1.9306e-11 + T * (-2.2032e-15 + T * 1.0052e-19))))));   //[kg/kmol]
 		}
 
 		return 0;
@@ -128,19 +128,19 @@ namespace OpenSMOKE
 	double SootParticles::CrossSection(const double T) const
 	{
 		const double M = MolecularWeight(T) / 1000.;	// [kg/mol]
-		return (1.8e-19 +M*(-1.857e-17 + M*(1.404e-15 +M*(-2.593e-14 + M*(2.075e-13 - M*6.667e-13)))));   //[m2]
+		return (1.8e-19 + M * (-1.857e-17 + M * (1.404e-15 + M * (-2.593e-14 + M * (2.075e-13 - M * 6.667e-13)))));   //[m2]
 	}
 
 	double SootParticles::VaporizationHeat(const double T) const
 	{
 		if (hv_correlation_ == HV_HOFMAN_2007)
 		{
-			return 1e3*(205398 + T*(736.6 + T*(-0.4071 + T*(1.199e-4 + T*(-1.795e-8+T*1.072e-12)))));   // [J/kmol]
+			return 1e3*(205398 + T * (736.6 + T * (-0.4071 + T * (1.199e-4 + T * (-1.795e-8 + T * 1.072e-12)))));   // [J/kmol]
 		}
 
 		else if (hv_correlation_ == HV_MICHELSEN_2008)	// Michelsen (2008)
 		{
-			return 1e3*(9.2892e5 + T*(-609.8 + T*(0.63252 + T*(-2.9484e-4 + T*(7.0101e-8 + T*(-8.4111e-12 + T*4.088e-16))))));   //[J/kmol]
+			return 1e3*(9.2892e5 + T * (-609.8 + T * (0.63252 + T * (-2.9484e-4 + T * (7.0101e-8 + T * (-8.4111e-12 + T * 4.088e-16))))));   //[J/kmol]
 		}
 
 		return 0;

@@ -94,7 +94,7 @@ namespace OpenSMOKE
 	{
 		theta_ = theta;
 	}
-	
+
 	void LIISignalModel::SetSootAbsorptionFunction(const double Em)
 	{
 		Em_ = Em;
@@ -146,27 +146,27 @@ namespace OpenSMOKE
 		const double F = LaserTemporalIntensity(t);
 		const double Cabs = AdsorptionCrossSection(dp);
 
-		return Cabs*F;
+		return Cabs * F;
 	}
 
 	double LIISignalModel::QConduction(const double Tp, const double Tg, const double p, const double dp) const
 	{
 		if (conduction_model_ == HEAT_CONDUCTION_FREE_MOLECULAR)
 		{
-			const double fa = 1./(gas_.Gamma(Tg)-1.);
-			const double fb = 1./(gas_.Gamma(Tp) - 1.);
-			const double fc = 1./(gas_.Gamma((Tg+Tp)/2.)-1.);
+			const double fa = 1. / (gas_.Gamma(Tg) - 1.);
+			const double fb = 1. / (gas_.Gamma(Tp) - 1.);
+			const double fc = 1. / (gas_.Gamma((Tg + Tp) / 2.) - 1.);
 			const double I = (fa + 4.*fc + fb) / 6.;
-			const double gammaStar = 1.+1./I;
+			const double gammaStar = 1. + 1. / I;
 
 			return alpha_ * pi_* (dp*dp) * p / 8. * std::sqrt(8.*R_*Tg / pi_ / gas_.M()) *
-								(gammaStar + 1.) / (gammaStar - 1.)*(Tp / Tg - 1.);
+				(gammaStar + 1.) / (gammaStar - 1.)*(Tp / Tg - 1.);
 		}
 
 		else if (conduction_model_ == HEAT_CONDUCTION_CONTINUUM)
 		{
 			const double fa = gas_.ThermalConductivity(Tg);
-			const double fc = gas_.ThermalConductivity((Tg+Tp)/2.);
+			const double fc = gas_.ThermalConductivity((Tg + Tp) / 2.);
 			const double fb = gas_.ThermalConductivity(Tp);
 			const double I = (Tp - Tg) / 6.*(fa + 4.*fc + fb);
 
@@ -183,24 +183,24 @@ namespace OpenSMOKE
 			const double lambda = kg / f / p * (gamma - 1.)*std::sqrt(pi_*Mg*Tg / 2. / R_);
 
 
-			return 2.*kg*pi_*dp*dp*(Tp-Tg)/(dp+G*lambda);
+			return 2.*kg*pi_*dp*dp*(Tp - Tg) / (dp + G * lambda);
 		}
 
 		else if (conduction_model_ == HEAT_CONDUCTION_TRANSITION_FUCHS)
 		{
 			const double eps = 1e-6;
-			double Tmin = (1.-eps)*Tg + eps*Tp;
-			double Tmax = (1.-eps)*Tp + eps*Tg;
-			double Tdelta = (Tg+Tp)/2.;
+			double Tmin = (1. - eps)*Tg + eps * Tp;
+			double Tmax = (1. - eps)*Tp + eps * Tg;
+			double Tdelta = (Tg + Tp) / 2.;
 
-			double fmin =	QConductionTransitionFuchsContinuum(Tmin, Tg, p, dp) -
-							QConductionTransitionFuchsFreeMolecular(Tp, Tmin, p, dp);
+			double fmin = QConductionTransitionFuchsContinuum(Tmin, Tg, p, dp) -
+				QConductionTransitionFuchsFreeMolecular(Tp, Tmin, p, dp);
 
-			double fmax =	QConductionTransitionFuchsContinuum(Tmax, Tg, p, dp) -
-							QConductionTransitionFuchsFreeMolecular(Tp, Tmax, p, dp);
+			double fmax = QConductionTransitionFuchsContinuum(Tmax, Tg, p, dp) -
+				QConductionTransitionFuchsFreeMolecular(Tp, Tmax, p, dp);
 
 			double fdelta = QConductionTransitionFuchsContinuum(Tdelta, Tg, p, dp) -
-							QConductionTransitionFuchsFreeMolecular(Tp, Tdelta, p, dp);
+				QConductionTransitionFuchsFreeMolecular(Tp, Tdelta, p, dp);
 
 			for (unsigned int k = 0; k < 12; k++)
 			{
@@ -210,8 +210,8 @@ namespace OpenSMOKE
 					fmax = fdelta;
 
 					Tdelta = (Tmin + Tdelta) / 2.;
-					fdelta =	QConductionTransitionFuchsContinuum(Tdelta, Tg, p, dp) -
-								QConductionTransitionFuchsFreeMolecular(Tp, Tdelta, p, dp);
+					fdelta = QConductionTransitionFuchsContinuum(Tdelta, Tg, p, dp) -
+						QConductionTransitionFuchsFreeMolecular(Tp, Tdelta, p, dp);
 				}
 				else
 				{
@@ -219,8 +219,8 @@ namespace OpenSMOKE
 					fmin = fdelta;
 
 					Tdelta = (Tmax + Tdelta) / 2.;
-					fdelta =	QConductionTransitionFuchsContinuum(Tdelta, Tg, p, dp) -
-								QConductionTransitionFuchsFreeMolecular(Tp, Tdelta, p, dp);
+					fdelta = QConductionTransitionFuchsContinuum(Tdelta, Tg, p, dp) -
+						QConductionTransitionFuchsFreeMolecular(Tp, Tdelta, p, dp);
 				}
 			}
 
@@ -235,7 +235,7 @@ namespace OpenSMOKE
 		const double deltaHvs = soot_.VaporizationHeat(Tp);	// [J/kmol]
 		const double Mvs = soot_.MolecularWeight(Tp);       // [kg/kmol]
 
-		return deltaHvs/Mvs*J;								// [W]
+		return deltaHvs / Mvs * J;								// [W]
 
 	}
 
@@ -243,7 +243,7 @@ namespace OpenSMOKE
 	{
 		const double Mvs = soot_.MolecularWeight(Tp);			// [kg/kmol]
 		const double NFMs = FluxFreeMolecularRegime(Tp, dp);	// [1/m2/s]
-		const double NCs  = FluxContinuumRegime(Tp, Tg, p, dp);	// [1/m2/s]
+		const double NCs = FluxContinuumRegime(Tp, Tg, p, dp);	// [1/m2/s]
 
 		const double Nvs = 1. / (1. / NFMs + 1. / NCs);			// [1/m2/s]
 
@@ -255,7 +255,7 @@ namespace OpenSMOKE
 		if (laser_model_ == LASER_MODEL_GAUSSIAN)
 		{
 			const double sigma = FHMW_ / (2. * std::sqrt(2. * log(2.)));
-			return phi_ / sigma / std::sqrt(2.*pi_)*std::exp(-( (t - mu_)*(t - mu_))/(2.*sigma*sigma));
+			return phi_ / sigma / std::sqrt(2.*pi_)*std::exp(-((t - mu_)*(t - mu_)) / (2.*sigma*sigma));
 		}
 
 		return 0;
@@ -263,7 +263,7 @@ namespace OpenSMOKE
 
 	double LIISignalModel::AdsorptionCrossSection(const double dp) const
 	{
-		return pi_*pi_/lambda_ex_* (dp*dp*dp) * Em_;
+		return pi_ * pi_ / lambda_ex_ * (dp*dp*dp) * Em_;
 	}
 
 	double LIISignalModel::FluxFreeMolecularRegime(const double Tp, const double dp) const
@@ -271,7 +271,7 @@ namespace OpenSMOKE
 		const double pvs = soot_.VaporPressure(Tp);				// [Pa]
 		const double Mvs = soot_.MolecularWeight(Tp);			// [kg/kmol]
 
-		return beta_*pvs/kB_/Tp * std::sqrt(R_*Tp/(2.*pi_*Mvs));   // [1/m2/s]
+		return beta_ * pvs / kB_ / Tp * std::sqrt(R_*Tp / (2.*pi_*Mvs));   // [1/m2/s]
 
 	}
 
@@ -292,7 +292,7 @@ namespace OpenSMOKE
 		const double gammaStar = 1. + 1. / I;
 
 		return	alpha_ * pi_* (dp*dp) * p / 8. * std::sqrt(8.*R_*Tdelta / pi_ / gas_.M()) *
-				(gammaStar + 1.) / (gammaStar - 1.)*(Tp / Tdelta - 1.);
+			(gammaStar + 1.) / (gammaStar - 1.)*(Tp / Tdelta - 1.);
 	}
 
 	double LIISignalModel::QConductionTransitionFuchsContinuum(const double Tdelta, const double Tg, const double p, const double dp) const
@@ -309,11 +309,11 @@ namespace OpenSMOKE
 
 		const double lambda = kg / f / p * (gamma - 1.)*std::sqrt(pi_*Mg*Tdelta / 2. / R_);
 
-		const double Lambda1 = 1. + (2.*lambda/dp);
-		const double Lambda2 = 1. + (2.*lambda/dp)*(2.*lambda/dp);
+		const double Lambda1 = 1. + (2.*lambda / dp);
+		const double Lambda2 = 1. + (2.*lambda / dp)*(2.*lambda / dp);
 
-		const double coefficient = 0.2*std::pow(Lambda1, 5.) - 1./3.*Lambda2*std::pow(Lambda1, 3.) + 2./15.*std::pow(Lambda2, 2.5);
-		const double delta = std::pow(dp/2., 3.)/lambda/lambda * coefficient - dp/2.;
+		const double coefficient = 0.2*std::pow(Lambda1, 5.) - 1. / 3.*Lambda2*std::pow(Lambda1, 3.) + 2. / 15.*std::pow(Lambda2, 2.5);
+		const double delta = std::pow(dp / 2., 3.) / lambda / lambda * coefficient - dp / 2.;
 
 		return 4.*pi_*(delta + dp / 2.)*I;
 	}
