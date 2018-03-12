@@ -38,6 +38,7 @@
 #define OpenSMOKE_LIISignalSimulator_H
 
 #include "LogNormalDistribution.h"
+#include "UserDefinedDistribution.h"
 #include "LIISignalModel.h"
 
 namespace OpenSMOKE
@@ -52,7 +53,7 @@ namespace OpenSMOKE
 
 	public:
 
-		enum ParticleSizeDistributionFunction { DISTRIBUTION_MONODISPERSED, DISTRIBUTION_LOGNORMAL };
+		enum ParticleSizeDistributionFunction { DISTRIBUTION_MONODISPERSED, DISTRIBUTION_LOGNORMAL, DISTRIBUTION_USER_DEFINED };
 
 	public:
 
@@ -123,6 +124,30 @@ namespace OpenSMOKE
 		*/
 		void SetLogNormalParticleSizeDistributionFunction(OpenSMOKE::LogNormalDistribution& log_normal_pdf);
 
+		/**
+		*@brief Sets a user defined distribution function
+		*@param	user_defined_pdf the user defined particle size distribution function
+		*/
+		void SetUserDefinedParticleSizeDistributionFunction(OpenSMOKE::UserDefinedDistribution& user_defined_pdf);
+
+		/**
+		*@brief Returns the LII signal (in W/m)
+		*@return the LII signal (in W/m)
+		*/
+		const std::vector<double>& SLII() const { return SLII_; }
+
+		/**
+		*@brief Returns the normalized signal
+		*@return the normalized signal
+		*/
+		const std::vector<double>& nSLII() const { return nSLII_; }
+
+		/**
+		*@brief Returns the particle temperature (in K)
+		*@return the particle temperature (in K)
+		*/
+		const std::vector<double>& Tp() const { return Tp_; }
+
 	private:
 
 		/**
@@ -134,6 +159,16 @@ namespace OpenSMOKE
 		*@brief Simulates the temporal evolution of temperature and mass of soot particles according to a log-normal distribution
 		*/
 		void SolveLogNormalDistribution();
+
+		/**
+		*@brief Simulates the temporal evolution of temperature and mass of soot particles according to a user-defined distribution
+		*/
+		void SolveUserDefinedDistribution();
+
+		/**
+		*@brief Reconstructs the normalized signal at the end of the simulations
+		*/
+		void NormalizedSignal();
 
 
 	private:
@@ -153,6 +188,7 @@ namespace OpenSMOKE
 		std::vector<double> Qeva_;		//!< solution vector: evaporation heat (in W)
 		std::vector<double> Qrad_;		//!< solution vector: radiation heat (in W)
 		std::vector<double> Qtot_;		//!< solution vector: total heat (in W)
+		std::vector<double> nSLII_;		//!< solution vector: normalized LII signal
 
 		double Tp0_;					//!< initial temperature of soot particles (in K)
 		double dp0_;					//!< initial diameter of soot particles (in m)
@@ -161,8 +197,9 @@ namespace OpenSMOKE
 		double tf_;						//!< final time of integration (in s)
 		double dt_;						//!< time step of integration (in s)
 
-		ParticleSizeDistributionFunction distribution_;		//!< particle size diameter distribution function
-		OpenSMOKE::LogNormalDistribution* log_normal_pdf_;	//!< pointer to a log-normal distribution
+		ParticleSizeDistributionFunction distribution_;			//!< particle size diameter distribution function
+		OpenSMOKE::LogNormalDistribution* log_normal_pdf_;		//!< pointer to a log-normal distribution
+		OpenSMOKE::UserDefinedDistribution* user_defined_pdf_;	//!< pointer to a user-defined distribution
 
 	private:
 

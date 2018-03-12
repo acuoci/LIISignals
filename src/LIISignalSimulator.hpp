@@ -35,6 +35,7 @@
 \*-----------------------------------------------------------------------*/
 
 #include "RungeKutta4thOrder.h"
+#include <algorithm>
 
 namespace OpenSMOKE
 {
@@ -101,12 +102,20 @@ namespace OpenSMOKE
 		distribution_ = DISTRIBUTION_LOGNORMAL;
 	}
 
+	void LIISignalSimulator::SetUserDefinedParticleSizeDistributionFunction(OpenSMOKE::UserDefinedDistribution& user_defined_normal)
+	{
+		user_defined_pdf_ = &user_defined_normal;
+		distribution_ = DISTRIBUTION_USER_DEFINED;
+	}
+
 	void LIISignalSimulator::Solve()
 	{
 		if (distribution_ == DISTRIBUTION_MONODISPERSED)
 			SolveMonodispersedDistribution();
 		else if (distribution_ == DISTRIBUTION_LOGNORMAL)
 			SolveLogNormalDistribution();
+		else if (distribution_ == DISTRIBUTION_USER_DEFINED)
+			SolveUserDefinedDistribution();
 	}
 
 	void LIISignalSimulator::SolveMonodispersedDistribution()
@@ -151,8 +160,9 @@ namespace OpenSMOKE
 			Qeva_[k] = lii_.QEvaporation(Tp_[k], J_[k]);
 			Qrad_[k] = lii_.QRadiation(Tp_[k], Tg_, dp_[k]);
 			Qtot_[k] = Qabs_[k] - (Qcon_[k] + Qeva_[k] + Qrad_[k]);
-
 		}
+
+		NormalizedSignal();
 	}
 
 	void LIISignalSimulator::SolveLogNormalDistribution()
@@ -216,6 +226,82 @@ namespace OpenSMOKE
 				Qtot_[k] += Qabs_[k] - (Qcon_[k] + Qeva_[k] + Qrad_[k]);
 			}
 		}
+
+		NormalizedSignal();
+	}
+
+	void LIISignalSimulator::SolveUserDefinedDistribution()
+	{
+
+		std::vector<double> x = user_defined_pdf_->x();
+		std::vector<double> p = user_defined_pdf_->p();
+
+		for (unsigned int i = 0; i < user_defined_pdf_->n(); i++)
+		{
+			const double dp0 = x[i] / 1.e9;
+			const double mp0 = pi_ / 6.*std::pow(dp0, 3.)*lii_.soot().Density();
+
+			OpenSMOKE::RungeKutta4thOrder rk4;
+
+			std::vector<double> y(2);
+			y[0] = Tp0_;
+			y[1] = mp0;
+
+			rk4.SetInitialConditions(2, 0., y.data());
+			rk4.SetFinalTime(tf_);
+			rk4.SetTimeStep(dt_);
+			rk4.SetOdeSystem(ptEquations);
+			rk4.Solve();
+
+			// Recovering the solution
+			unsigned int n = rk4.solution()[0].size();
+
+			// Allocate memory
+			if (i == 0)
+			{
+				t_.resize(n);		std::fill(t_.begin(), t_.end(), 0.);
+				Tp_.resize(n);		std::fill(Tp_.begin(), Tp_.end(), 0.);
+				mp_.resize(n);		std::fill(mp_.begin(), mp_.end(), 0.);
+				dp_.resize(n);		std::fill(dp_.begin(), dp_.end(), 0.);
+				J_.resize(n);		std::fill(J_.begin(), J_.end(), 0.);
+				SLII_.resize(n);	std::fill(SLII_.begin(), SLII_.end(), 0.);
+				Qabs_.resize(n);	std::fill(Qabs_.begin(), Qabs_.end(), 0.);
+				Qcon_.resize(n);	std::fill(Qcon_.begin(), Qcon_.end(), 0.);
+				Qeva_.resize(n);	std::fill(Qeva_.begin(), Qeva_.end(), 0.);
+				Qrad_.resize(n);	std::fill(Qrad_.begin(), Qrad_.end(), 0.);
+				Qtot_.resize(n);	std::fill(Qtot_.begin(), Qtot_.end(), 0.);
+			}
+
+			for (unsigned int k = 0; k < n; k++)
+			{
+				t_[k] = rk4.solution()[0][k];
+				Tp_[k] += p[i] * rk4.solution()[1][k];
+				mp_[k] += p[i] * rk4.solution()[2][k];
+
+				dp_[k] += p[i] * std::pow(6.*rk4.solution()[2][k] / pi_ / lii_.soot().Density(), 1. / 3.);
+
+				J_[k] += p[i] * lii_.JEvaporation(Tp_[k], Tg_, p_, dp_[k]);
+				SLII_[k] += p[i] * lii_.LIISignal(dp_[k], Tp_[k]);
+
+				Qabs_[k] += p[i] * lii_.QAbsorption(t_[k], dp_[k]);
+				Qcon_[k] += p[i] * lii_.QConduction(Tp_[k], Tg_, p_, dp_[k]);
+				Qeva_[k] += p[i] * lii_.QEvaporation(Tp_[k], J_[k]);
+				Qrad_[k] += p[i] * lii_.QRadiation(Tp_[k], Tg_, dp_[k]);
+
+				Qtot_[k] += Qabs_[k] - (Qcon_[k] + Qeva_[k] + Qrad_[k]);
+			}
+		}
+
+		NormalizedSignal();
+	}
+
+	void LIISignalSimulator::NormalizedSignal()
+	{
+		nSLII_.resize(SLII_.size());
+		
+		const double max_signal = *std::max_element(SLII_.begin(), SLII_.end());
+		for (unsigned int k = 0; k < SLII_.size(); k++)
+			nSLII_[k] = SLII_[k] / max_signal;
 	}
 
 	void LIISignalSimulator::Equations(const double t, const double* u, double* dudt) const

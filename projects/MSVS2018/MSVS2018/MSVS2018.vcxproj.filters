@@ -51,9 +51,15 @@
     <ClInclude Include="..\..\..\src\LIISignalSimulator.hpp">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\src\UserDefinedDistribution.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\UserDefinedDistribution.hpp">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\src\main.cpp">
+    <ClCompile Include="..\..\..\examples\02\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
