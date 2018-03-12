@@ -1,0 +1,34 @@
+// Input data file name (T[K] | MW[kg/kmol] | P[Pa] | dp[nm] | np[-] | x[-])
+data
+// Output file name
+output
+// Heat conduction model: free-molecular, continuum, transition-mccoy-cha, transition-fuchs
+free-molecular
+// Rectangular detection bandpass: bandpass wavelength min. (in nm)	
+545
+// Rectangular detection bandpass: Bandpass wavelength max. (in nm)		
+555
+// Laser wavelength (in nm)
+1064
+// Full width at half maximum of temporal laser beam profile (in ns)
+7
+// Soot absorption function E(m)
+0.4
+// Laser fluence (in J/cm2)
+0.1
+// Thermal accommodation coefficient (alpha)	
+0.3
+// Mass accommodation coefficient (beta)
+1
+// Soot particle density (in kg/m3)
+1860.
+// Total time of simulation (in ns)
+2000
+// Time step (in ns)
+0.2
+// List of output times (in ns, first number is the number of times)
+5 	100 200 300 400 500
+// Temperature threshold (in K): the cell is skipped if the temperature is below the threshold
+400
+// Mole fraction threshold: the cell is skipped if the sum of BINS mole fractions is below the threshold
+1e-16
