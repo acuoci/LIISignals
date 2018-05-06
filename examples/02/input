@@ -29,6 +29,7 @@ free-molecular
 // List of output times (in ns, first number is the number of times)
 5 	100 200 300 400 500
 // Window time (ns)
+25
 // Temperature threshold (in K): the cell is skipped if the temperature is below the threshold
 400
 // Mole fraction threshold: the cell is skipped if the sum of BINS mole fractions is below the threshold
