@@ -62,6 +62,8 @@ namespace OpenSMOKE
 		tf_ = 2e-6;				// final time of integration (in s)
 		dt_ = 2e-10;			// time step of integration (in s)
 
+		dt_window_ = 25e-9;		// time window for averaging (in s)
+
 		distribution_ = DISTRIBUTION_MONODISPERSED; // particle size distribution function
 	}
 
@@ -94,6 +96,11 @@ namespace OpenSMOKE
 	void LIISignalSimulator::SetTimeStep(const double dt)
 	{
 		dt_ = dt;
+	}
+
+	void LIISignalSimulator::SetTimeWindow(const double dt_window)
+	{
+		dt_window_ = dt_window;
 	}
 
 	void LIISignalSimulator::SetLogNormalParticleSizeDistributionFunction(OpenSMOKE::LogNormalDistribution& log_normal)
@@ -163,6 +170,7 @@ namespace OpenSMOKE
 		}
 
 		NormalizedSignal();
+		Averaging();
 	}
 
 	void LIISignalSimulator::SolveLogNormalDistribution()
@@ -228,6 +236,7 @@ namespace OpenSMOKE
 		}
 
 		NormalizedSignal();
+		Averaging();
 	}
 
 	void LIISignalSimulator::SolveUserDefinedDistribution()
@@ -293,6 +302,7 @@ namespace OpenSMOKE
 		}
 
 		NormalizedSignal();
+		Averaging();
 	}
 
 	void LIISignalSimulator::NormalizedSignal()
@@ -302,6 +312,36 @@ namespace OpenSMOKE
 		const double max_signal = *std::max_element(SLII_.begin(), SLII_.end());
 		for (unsigned int k = 0; k < SLII_.size(); k++)
 			nSLII_[k] = SLII_[k] / max_signal;
+	}
+
+	void LIISignalSimulator::Averaging()
+	{
+		const unsigned n = dt_window_ / dt_;
+
+		Tp_averaged_.resize(Tp_.size()-n);
+		SLII_averaged_.resize(SLII_.size()-n);
+		nSLII_averaged_.resize(nSLII_.size()-n);
+
+		std::fill(Tp_averaged_.begin(), Tp_averaged_.end(), 0.);
+		std::fill(SLII_averaged_.begin(), SLII_averaged_.end(), 0.);
+		std::fill(nSLII_averaged_.begin(), nSLII_averaged_.end(), 0.);
+
+		for (unsigned int k = 0; k < SLII_.size() - n; k++)
+		{
+			for (unsigned int j = 0; j < n; j++)
+			{
+				Tp_averaged_[k] += Tp_[k + j];
+				SLII_averaged_[k] += SLII_[k + j];
+				nSLII_averaged_[k] += nSLII_[k + j];
+			}
+		}
+
+		for (unsigned int k = 0; k < SLII_.size() - n; k++)
+		{
+			Tp_averaged_[k] /= static_cast<double>(n);
+			SLII_averaged_[k] /= static_cast<double>(n);
+			nSLII_averaged_[k] /= static_cast<double>(n);
+		}
 	}
 
 	void LIISignalSimulator::Equations(const double t, const double* u, double* dudt) const

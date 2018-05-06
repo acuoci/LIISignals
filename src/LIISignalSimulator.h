@@ -119,6 +119,12 @@ namespace OpenSMOKE
 		void SetTimeStep(const double dt);
 
 		/**
+		*@brief Sets the time window for averaging
+		*@param	dt_window the time window for averaging (in s)
+		*/
+		void SetTimeWindow(const double dt_window);
+
+		/**
 		*@brief Sets the log-normal particle size function
 		*@param	log_normal_pdf the log normal particle size distribution function
 		*/
@@ -148,6 +154,25 @@ namespace OpenSMOKE
 		*/
 		const std::vector<double>& Tp() const { return Tp_; }
 
+		/**
+		*@brief Returns the LII signal (in W/m) averaged over the user defined window time
+		*@return the averaged LII signal (in W/m)
+		*/
+		const std::vector<double>& SLII_averaged() const { return SLII_averaged_; }
+
+		/**
+		*@brief Returns the normalized signal averaged over the user defined window time
+		*@return the averaged normalized signal
+		*/
+		const std::vector<double>& nSLII_averaged() const { return nSLII_averaged_; }
+
+		/**
+		*@brief Returns the particle temperature (in K) averaged over the user defined window time
+		*@return the averaged particle temperature (in K)
+		*/
+		const std::vector<double>& Tp_averaged() const { return Tp_averaged_; }
+
+
 	private:
 
 		/**
@@ -170,12 +195,15 @@ namespace OpenSMOKE
 		*/
 		void NormalizedSignal();
 
+		/**
+		*@brief Averages the quantities of interest over the user-specified window
+		*/
+		void Averaging();
+
 
 	private:
 
 		LIISignalModel & lii_;			//!< lii signal model
-
-
 
 		std::vector<double> t_;			//!< solution vector: time (in s)
 		std::vector<double> Tp_;		//!< solution vector: soot particle temperature (in K)
@@ -190,12 +218,18 @@ namespace OpenSMOKE
 		std::vector<double> Qtot_;		//!< solution vector: total heat (in W)
 		std::vector<double> nSLII_;		//!< solution vector: normalized LII signal
 
+		std::vector<double> Tp_averaged_;			//!< solution vector: averaged soot particle temperature (in K)
+		std::vector<double> SLII_averaged_;			//!< solution vector: averaged LII signal (in W/m)
+		std::vector<double> nSLII_averaged_;		//!< solution vector: averaged normalized LII signal
+
+
 		double Tp0_;					//!< initial temperature of soot particles (in K)
 		double dp0_;					//!< initial diameter of soot particles (in m)
 		double p_;						//!< pressure (in Pa)
 		double Tg_;						//!< gas mixture temperature (in K)
 		double tf_;						//!< final time of integration (in s)
 		double dt_;						//!< time step of integration (in s)
+		double dt_window_;				//!< window time for averaging (in s)
 
 		ParticleSizeDistributionFunction distribution_;			//!< particle size diameter distribution function
 		OpenSMOKE::LogNormalDistribution* log_normal_pdf_;		//!< pointer to a log-normal distribution

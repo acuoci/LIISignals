@@ -51,6 +51,15 @@
 
 void parse_file(const std::string file_name, int& number_of_lines, int& number_of_columns);
 
+void ErrorMessage(const std::string message)
+{
+	std::cout << "Fatal Error Message" << std::endl;
+	std::cout << message << std::endl;
+	std::cout << "Press enter to exit..." << std::endl;
+	getchar();
+	exit(-1);
+}
+
 int main()
 {
 	std::ifstream fInput("input", std::ios::in);
@@ -121,9 +130,14 @@ int main()
 	std::vector<int>	out_steps(n_times);
 	for (int i = 0; i < n_times; i++)
 	{
-		fInput >> out_times[i];	out_times[i] /= 1e9;
+		fInput >> out_times[i];	out_times[i] /= 1.e9;
 		out_steps[i] = static_cast<int>(out_times[i] / dt);
 	}
+	std::getline(fInput, dummy);
+
+	std::getline(fInput, dummy);	// time windows (in ns)
+	double dt_window; fInput >> dt_window;
+	dt_window /= 1.e9;
 	std::getline(fInput, dummy);
 
 	std::getline(fInput, dummy);	// temperature threshold
@@ -136,6 +150,32 @@ int main()
 
 	fInput.close();
 
+	// Check user-data: time window
+	{
+		if (dt_window < dt)
+			ErrorMessage("The time window must be larger (or equal) than the time step");
+	}
+	
+	// Check user-data: output-times
+	{
+		for (int i = 0; i < n_times; i++)
+			if (out_times[i] > tf)
+				ErrorMessage("The output times must be lower than the total time of simulation");
+	}
+
+	// Check user-data: output-times + window time
+	{
+		for (int i = 0; i < n_times; i++)
+			if (out_times[i]+dt_window > tf)
+				ErrorMessage("The output times + time window must be lower than the total time of simulation");
+	}
+
+	// Check user-data: temperature threshold
+	{
+		if (threshold_temperature < 290. || threshold_temperature > 2000.)
+			ErrorMessage("The temperature threshold must be in the 290-2000 K range");
+	}
+
 
 	int nlines = 0;
 	int ncolumns = 0;
@@ -143,6 +183,7 @@ int main()
 	int nabscissas = (ncolumns - 3)/3;
 
 	std::ifstream fData(input_file_name, std::ios::in);
+
 	std::ofstream fOutput_SLII(output_file_name+".SLII", std::ios::out);
 	std::ofstream fOutput_nSLII(output_file_name+".nSLII", std::ios::out);
 	std::ofstream fOutput_Tp(output_file_name+".Tp", std::ios::out);
@@ -161,6 +202,27 @@ int main()
 	fOutput_SLII << std::endl;
 	fOutput_nSLII << std::endl;
 	fOutput_Tp << std::endl;
+
+
+	std::ofstream fOutput_SLII_averaged(output_file_name + ".SLII.averaged", std::ios::out);
+	std::ofstream fOutput_nSLII_averaged(output_file_name + ".nSLII.averaged", std::ios::out);
+	std::ofstream fOutput_Tp_averaged(output_file_name + ".Tp.averaged", std::ios::out);
+	fOutput_SLII_averaged.setf(std::ios::scientific);
+	fOutput_nSLII_averaged.setf(std::ios::scientific);
+	fOutput_Tp_averaged.setf(std::ios::scientific);
+
+	for (unsigned int j = 0; j < out_steps.size(); j++)
+	{
+		std::stringstream number; number << out_times[j] * 1e9;
+		std::string label = number.str() + "(ns)";
+		fOutput_SLII_averaged << std::left << std::setw(16) << std::fixed << std::setprecision(0) << label;
+		fOutput_nSLII_averaged << std::left << std::setw(16) << std::fixed << std::setprecision(0) << label;
+		fOutput_Tp_averaged << std::left << std::setw(16) << std::fixed << std::setprecision(0) << label;
+	}
+	fOutput_SLII_averaged << std::endl;
+	fOutput_nSLII_averaged << std::endl;
+	fOutput_Tp_averaged << std::endl;
+
 
 	std::string line;
 	std::getline(fData, line);	// first line is header
@@ -267,6 +329,7 @@ int main()
 				simulator.SetGasMixturePressure(Pg);
 				simulator.SetFinalTime(tf);
 				simulator.SetTimeStep(dt);
+				simulator.SetTimeWindow(dt_window);
 				simulator.SetInitialDiameter(user_defined_pdf.mu() / 1.e9);
 			}
 
@@ -282,6 +345,14 @@ int main()
 				fOutput_nSLII << std::left << std::setw(16) << std::scientific << std::setprecision(6) << simulator.nSLII()[out_steps[j]];
 				fOutput_Tp << std::left << std::setw(16) << std::scientific << std::setprecision(6) << simulator.Tp()[out_steps[j]];
 			}
+
+			// Write
+			for (unsigned int j = 0; j < out_steps.size(); j++)
+			{
+				fOutput_SLII_averaged << std::left << std::setw(16) << std::scientific << std::setprecision(6) << simulator.SLII_averaged()[out_steps[j]];
+				fOutput_nSLII_averaged << std::left << std::setw(16) << std::scientific << std::setprecision(6) << simulator.nSLII_averaged()[out_steps[j]];
+				fOutput_Tp_averaged << std::left << std::setw(16) << std::scientific << std::setprecision(6) << simulator.Tp_averaged()[out_steps[j]];
+			}
 		}
 		else
 		{
@@ -294,11 +365,23 @@ int main()
 				fOutput_nSLII << std::left << std::setw(16) << std::scientific << std::setprecision(6) << 0.;
 				fOutput_Tp << std::left << std::setw(16) << std::scientific << std::setprecision(6) << 0.;
 			}
+
+			// Write
+			for (unsigned int j = 0; j < out_steps.size(); j++)
+			{
+				fOutput_SLII_averaged << std::left << std::setw(16) << std::scientific << std::setprecision(6) << 0.;
+				fOutput_nSLII_averaged << std::left << std::setw(16) << std::scientific << std::setprecision(6) << 0.;
+				fOutput_Tp_averaged << std::left << std::setw(16) << std::scientific << std::setprecision(6) << 0.;
+			}
 		}
 
 		fOutput_SLII << std::endl;
 		fOutput_nSLII << std::endl;
 		fOutput_Tp << std::endl;
+
+		fOutput_SLII_averaged << std::endl;
+		fOutput_nSLII_averaged << std::endl;
+		fOutput_Tp_averaged << std::endl;
 
 		const double total_duration = (std::clock() - start) / (double)CLOCKS_PER_SEC;
 		const double time_per_cell = total_duration / static_cast<double>(k);
@@ -310,6 +393,10 @@ int main()
 	fOutput_SLII.close();
 	fOutput_nSLII.close();
 	fOutput_Tp.close();
+
+	fOutput_SLII_averaged.close();
+	fOutput_nSLII_averaged.close();
+	fOutput_Tp_averaged.close();
 
 	std::cout << "Successfully done! Press enter to continue..." << std::endl;
 	getchar();
